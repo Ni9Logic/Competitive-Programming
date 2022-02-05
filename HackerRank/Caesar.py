@@ -1,31 +1,19 @@
+import string
+symbols_low = string.ascii_lowercase
+symbols_up = string.ascii_uppercase
+
 n = int(input())
 s = input()
 s = list(s)
 k = int(input())
-lower = "abcdefghijklmnopqrstuvwxyz"
-upper = lower.upper()
-lower = list(lower)
-upper = list(upper)
-for i in range(0, k):
-   lower.append(lower[i])
-   upper.append(upper[i])
-for i in range(0, k):
-    lower.pop(0)
-    upper.pop(0)
+res = []
 for i in s:
-    if i in lower or i in upper:
-        if i.isupper():
-            if (upper.index(i) + k > 26):
-                index = abs(upper.index(i) + k - 26)
-                print(upper[index], end ='')
-            else:
-                print(upper[upper.index(i) + k], end ='')
-            
-        elif i.islower():
-            if (lower.index(i) + k > 26):
-                index = abs(lower.index(i) + k - 26)
-                print(lower[index], end ='')
-            else:
-                print(lower[lower.index(i) + k], end ='')
+    if i.isupper():
+        res.append(symbols_up[(symbols_up.index(i) + k) % len(symbols_up)])
+    elif i.islower():
+        res.append(symbols_low[(symbols_low.index(i) + k) % len(symbols_low)])
     else:
-        print(i, end ='')
+        res.append(i)
+     
+s = "".join(res)   
+print(s)
