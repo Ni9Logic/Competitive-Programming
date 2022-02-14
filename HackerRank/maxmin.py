@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import collections, sys
+import sys
 
 
 if __name__ == '__main__':
