@@ -16,7 +16,6 @@ def solve():
         elif arr[i] < arr[i + 1]:
             anotherlist.append(arr[i])
     
-    anotherlist = dict.fromkeys(anotherlist)
     print(len(anotherlist), end = ' ')
     print(*anotherlist)
                 
