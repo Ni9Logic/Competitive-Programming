@@ -21,6 +21,7 @@ def solve():
     matrix2 = np.array([matrix2])
     matrix2 = matrix2.reshape(matrix2_row, matrix2_col)
     
+    #? Algorithm
     if (matrix1_col != matrix2_col):
         print("Not Possible")
     elif matrix1_row != matrix2_col:
