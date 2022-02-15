@@ -25,10 +25,10 @@ def solve():
             print("Impossible")
         else:
             for i in board:
-                if i[-1][-1] == 'B' and i[-1][-2] == 'B':
+                if i[-1][-2] == 'B' and i[-1][-1] != '.' or i[-1][-1] != 'R':
                     print("Blue Wins")
                     break
-                elif i[-1][-1] == 'R' and i[-1][-2] == 'R':
+                elif i[-1][-2] == 'R' and i[-1][-1] != '.' or i[-1][-1] != 'B':
                     print("Red Wins")
                     break
                     
