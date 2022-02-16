@@ -1,3 +1,5 @@
+from itertools import combinations, permutations
+
 def solve():
     #! ---------------(INPUT)------------------------
     
@@ -14,9 +16,10 @@ def solve():
         
     #! ---------------(INPUT)------------------------
 
-        
+    combine = permutations(orders)
+    combine = list(combine)
 
-    print(orders)
+    print(combine)
 
 def main():
     for i in range(int(input())):
