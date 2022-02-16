@@ -18,9 +18,8 @@ def solve():
 
     combine = permutations(orders)
     combine = list(combine)
-
-    print(combine)
-
+    if all(combine) in not_available:
+        return True
 def main():
     for i in range(int(input())):
         print(f"Case #{i + 1}: ", end = '')
