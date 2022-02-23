@@ -4,7 +4,7 @@ using namespace std;
 void solve()
 {
     const int DREAM = 1000000;
-    int TOTALSAVINGS = 0;
+    float TOTALSAVINGS = 0;
     float monthly_income, monthly_expense, Taxes, TaxTime, UnexpectedExpense, UnExpenseTime;
     cin >> monthly_income >> monthly_expense >> Taxes >> TaxTime >> UnexpectedExpense >> UnExpenseTime;
 

@@ -16,6 +16,7 @@ def solve():
     
     #! Algorithm
     while (TOTALSAVINGS <= DREAM):
+        print(TOTALSAVINGS)
         TOTALSAVINGS += monthly_income - monthly_expense
         TimeRemainingfromTax += 1
         TimeRemainingfromExpense += 1
@@ -26,7 +27,6 @@ def solve():
         if TimeRemainingfromTax == TaxTime:
             TOTALSAVINGS = TOTALSAVINGS - ((monthly_income * TimeRemainingfromTax) * Taxes)
             TimeRemainingfromTax = 0
-        
 
     print(months)
 def main():
@@ -34,4 +34,4 @@ def main():
         print(f"Case #{i + 1}: ", end = '')
         solve()
         
-        
+main()   
