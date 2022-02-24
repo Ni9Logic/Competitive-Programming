@@ -4,11 +4,11 @@ using namespace std;
 int main()
 {
     string s;
-    cin >> s;
+    getline(cin, s);
     int n = s.size();
     int left = floor(sqrt(n));
     int right = ceil(sqrt(n));
-    if (left * right < 8)
+    if (left * right < n)
         min(left, right) ? left++ : right++;
 
     char arr[left][right];
@@ -24,6 +24,8 @@ int main()
     {
         for (int i = 0; i < left; i++)
             cout << arr[i][j];
+        if (j == right - 1)
+            continue;
         cout << " ";
     }
 }
