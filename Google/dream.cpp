@@ -12,9 +12,11 @@ void solve()
     while (TOTALSAVINGS <= DREAM)
     {
         TOTALSAVINGS += monthly_income - monthly_expense;
-        TimeRemainingfromTax += 1;
-        TimeRemainingfromExpense += 1;
-        months += 1;
+
+        TimeRemainingfromTax++;
+        TimeRemainingfromExpense++;
+        months++;
+
         if (TimeRemainingfromExpense == UnExpenseTime)
         {
             TOTALSAVINGS = TOTALSAVINGS - UnexpectedExpense;
