@@ -21,7 +21,7 @@ public:
     }
 };
 
-class Project : public Person
+class Project
 {
 public:
     string name;
@@ -30,16 +30,15 @@ public:
     long long best_before;
     long long roles;
     vector<pair<string, long long>> required_skillset;
-    bool active = false;
     Project()
     {
-        cin >> name >> score >> best_before >> roles;
+        cin >> name >> days_required >> score >> best_before >> roles;
         string skillname;
-        long long skilllevel;
+        long long level;
         for (long long i = 0; i < roles; i++)
         {
-            cin >> skillname >> skilllevel;
-            required_skillset.push_back(make_pair(skillname, skilllevel));
+            cin >> skillname >> level;
+            required_skillset.push_back(make_pair(skillname, level));
         }
     }
 };
@@ -71,5 +70,19 @@ int main()
         for (long long j = 0; j < persons[i].skillset.size(); j++)
             cout << persons[i].skillset[j].first << " " << persons[i].skillset[j].second << " ";
         cout << endl;
+    }
+
+    cout << "---------------------------Projects-------------------------------------\n";
+    for (long long i = 0; i < projects.size(); i++)
+    {
+        printf("Name of the project is: %s\n", projects[i].name.c_str());
+        printf("Days Required to complete the project: %lld\n", projects[i].days_required);
+        printf("Total Score of the Project is: %lld\n", projects[i].score);
+        printf("Complete score to get before this much days: %lld\n", projects[i].best_before);
+        printf("Roles of the project are: %lld\n", projects[i].roles);
+        for (long long j = 0; j < projects[i].roles; j++)
+        {
+            
+        }
     }
 }
