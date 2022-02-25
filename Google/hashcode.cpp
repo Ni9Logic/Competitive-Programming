@@ -61,6 +61,7 @@ int main()
     }
     //? All the algorithms will be inserted here!
 
+    
     //? Output for validity of input!
     cout << "---------------------------Contributors-------------------------------------\n";
     for (long long i = 0; i < persons.size(); i++)
@@ -79,10 +80,9 @@ int main()
         printf("Days Required to complete the project: %lld\n", projects[i].days_required);
         printf("Total Score of the Project is: %lld\n", projects[i].score);
         printf("Complete score to get before this much days: %lld\n", projects[i].best_before);
-        printf("Roles of the project are: %lld\n", projects[i].roles);
+        printf("Roles of the project are: ");
         for (long long j = 0; j < projects[i].roles; j++)
-        {
-            
-        }
+            cout << projects[i].required_skillset[j].first << " " << projects[i].required_skillset[j].second << " ";
+        cout << endl;
     }
 }
