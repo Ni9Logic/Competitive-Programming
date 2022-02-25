@@ -1,10 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+long long score = 0;
+vector<string> completed_projects;
+
 class Person
 {
 public:
     string name;
+    int days_worked = 0;
     long long skills;
     vector<pair<string, long long>> skillset;
     bool isBusy = false;
@@ -29,6 +33,8 @@ public:
     long long score;
     long long best_before;
     long long roles;
+    bool compeleted = false;
+    bool active = false;
     vector<pair<string, long long>> required_skillset;
     Project()
     {
@@ -42,9 +48,26 @@ public:
         }
     }
 };
-
 vector<Person> persons;
 vector<Project> projects;
+class Working
+{
+public:
+    void working()
+    {
+        for (auto &person : persons)
+            for (auto &project : projects)
+                for (auto &skills : person.skillset)
+                    for (auto &required_skills : project.required_skillset)
+                        if (skills.first == required_skills.first)
+                        {
+                            cout << "Name of the person who has skill 1: " << person.name << endl;
+                            cout << "Skill of the person: " << skills.first << endl;
+                        }
+    }
+};
+
+Working work;
 int main()
 {
     long long c, p;
@@ -60,29 +83,5 @@ int main()
         projects.push_back(*object);
     }
     //? All the algorithms will be inserted here!
-
-    
-    //? Output for validity of input!
-    cout << "---------------------------Contributors-------------------------------------\n";
-    for (long long i = 0; i < persons.size(); i++)
-    {
-        printf("Name of the person is: %s\n", persons[i].name.c_str());
-        printf("SkillSets: ");
-        for (long long j = 0; j < persons[i].skillset.size(); j++)
-            cout << persons[i].skillset[j].first << " " << persons[i].skillset[j].second << " ";
-        cout << endl;
-    }
-
-    cout << "---------------------------Projects-------------------------------------\n";
-    for (long long i = 0; i < projects.size(); i++)
-    {
-        printf("Name of the project is: %s\n", projects[i].name.c_str());
-        printf("Days Required to complete the project: %lld\n", projects[i].days_required);
-        printf("Total Score of the Project is: %lld\n", projects[i].score);
-        printf("Complete score to get before this much days: %lld\n", projects[i].best_before);
-        printf("Roles of the project are: ");
-        for (long long j = 0; j < projects[i].roles; j++)
-            cout << projects[i].required_skillset[j].first << " " << projects[i].required_skillset[j].second << " ";
-        cout << endl;
-    }
+    work.working();
 }

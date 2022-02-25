@@ -1,53 +1,54 @@
-import numpy as np
+score = 0
+completed_projects = []
 
-TOTALSCORE = []
-
-class Data:
-    c_p = []
-    c = 0
-    p = 0
-    Contributors = []
-    Projects = []
-    nameofproject = 0
-    numberofdaysreq = 0
-    scoreofproject = 0
-    bestdays = 0
-    def gatherdata():
-        #! -----------------------------------------
-        c_p = input().rstrip().split()
-        Data.c = int(c_p[0])
-        Data.p = int(c_p[1])
-        
-        #! ----------------Contributors Input------------------
-        for i in range(Data.c):
-            name_skillset = input().rstrip().split()
-            skillsets_level_list = []
+class Person:
+    def __init__(self):
+        multiple_input = input().rstrip().split()
+        name = multiple_input[0]
+        self.name = name
+        skills = int(multiple_input[1])
+        self.skills = skills
+        self.days_worked = 0
+        self.totalskills = []
+        self.isBusy = False
+        for i in range(skills):
+            multiple_input = input().rstrip().split()
+            self.totalskills.append([multiple_input[0], int(multiple_input[1])])
             
-            for j in range(int(name_skillset[1])):
-                skillset_level = input().rstrip().split()  
-                skillsets_level_list.append(skillset_level) 
-                       
-            Data.Contributors.append([name_skillset[0], skillsets_level_list])
-        
-        #! ---------------Projects Input-------------------------
-        for k in range(Data.p):
-            name_days_score_bestbefore_roles = input().rstrip().split()
-            Data.nameofproject = name_days_score_bestbefore_roles[0]
-            Data.numberofdaysreq = int(name_days_score_bestbefore_roles[1])
-            Data.score = int(name_days_score_bestbefore_roles[2])
-            Data.bestdays = int(name_days_score_bestbefore_roles[3])
-            Data.Projects.append([Data.nameofproject, Data.numberofdaysreq, Data.score, Data.bestdays])
+class Project:
+    def __init__(self):
+        multiple_input = input().rstrip().split()
+        self.name = multiple_input[0]
+        self.days_required = int(multiple_input[1])
+        self.score = int(multiple_input[2])
+        self.bestBefore = int(multiple_input[3])
+        self.roles = int(multiple_input[4])
+        self.isActive = False
+        self.isComplete = False
+        self.required_skills = []
+        for i in range(self.roles):
+            multiple_input = input().rstrip().split()
+            self.required_skills.append([multiple_input[0], int(multiple_input[1])])
             
-            low = 0
-            for k in range(int(name_days_score_bestbefore_roles[4])):
-                req_skill_set = input().rstrip().split()
-                Data.Projects[low].insert(0, req_skill_set)
-                low += 1
+            
+Persons = []
+Projects = []
 
+def inputs():
+    multiple_input = input().rstrip().split()
+    c = int(multiple_input[0])
+    p1 = int(multiple_input[1])
+    for i in range(c):
+        p = Person()
+        Persons.append(p)
 
+    for i in range(p1):
+        pp = Project()
+        Projects.append(pp)
+        
+        
 def main():
-    Data.gatherdata()
-    print(Data.Projects)
-
-
-main()
+   inputs()
+  
+        
+main()        
