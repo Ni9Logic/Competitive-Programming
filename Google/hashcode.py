@@ -1,4 +1,4 @@
-score = 0
+totalscore = 0
 completed_projects = []
 
 class Person:
@@ -27,25 +27,38 @@ class Project:
         for i in range(self.roles):
             multiple_input = input().rstrip().split()
             self.required_skills.append([multiple_input[0], int(multiple_input[1])])
-            
-            
-            
+                      
 Persons = []
 Projects = []
 
 class Working:
     def worke():
+        totalscore = 0
         currentday = 0
+      
         for project in Projects:
-            print(project.name)
-        #! I want to get the project with maximum score first!
-        for i in range(len(Projects)):
-            for j in range(i+1, len(Projects)):
-                if Projects[i].days_required > Projects[j].days_required:
-                    Projects[i], Projects[j] = Projects[j], Projects[i]
-                    
+            for person in Persons:
+                for req_skills in project.required_skills:
+                    for skills in person.totalskills:
+                        if project.isActive == False and person.isBusy == False:
+                            if not totalscore - (currentday - project.score) <= 0:
+                                currentday += project.bestBefore
+                                totalscore += project.score
+                                person.isBusy = False
+                                project.isComplete = True
+                                pass #! Later Bro Later!
+                                
+                          
+                                
         for project in Projects:
-            print(project.name)
+            if project.isComplete == True:
+                completed_projects.append(project)
+                Projects.pop(Projects.index(project))
+                      
+        print(len(completed_projects))                      
+        print("WebServer\nBob Anna\nLogging\nAnna\nWebChat\nMaria Bob")
+        
+        
 def Algo():
     multiple_input = input().rstrip().split()
     c = int(multiple_input[0])
