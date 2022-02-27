@@ -4,19 +4,30 @@ using namespace std;
 void solve()
 {
     const int DREAM = 1000000;
+
     float TOTALSAVINGS = 0;
-    float monthly_income, monthly_expense, Taxes, TaxTime, UnexpectedExpense, UnExpenseTime;
+    float
+        monthly_income = 0.0,
+        monthly_expense = 0.0,
+        Taxes = 0.0,
+        UnexpectedExpense = 0.0;
+
+    auto TimeRemainingfromTax = 0,
+         TimeRemainingfromExpense = 0;
+
+    auto months = 0,
+         UnExpenseTime = 0,
+         TaxTime = 0;
+
+    cout << setprecision(2);
     cin >> monthly_income >> monthly_expense >> Taxes >> TaxTime >> UnexpectedExpense >> UnExpenseTime;
 
-    int TimeRemainingfromTax = 0, TimeRemainingfromExpense = 0, months = 0;
-    while (TOTALSAVINGS <= DREAM)
+    for (TOTALSAVINGS = 0; TOTALSAVINGS <= DREAM; TOTALSAVINGS += monthly_income - monthly_expense)
     {
-        TOTALSAVINGS += monthly_income - monthly_expense;
-
         TimeRemainingfromTax++;
         TimeRemainingfromExpense++;
         months++;
-
+        cout << TOTALSAVINGS << endl;
         if (TimeRemainingfromExpense == UnExpenseTime)
         {
             TOTALSAVINGS = TOTALSAVINGS - UnexpectedExpense;
@@ -37,7 +48,7 @@ int main()
     cin >> n;
     for (int i = 0; i < n; i++)
     {
-        printf("Case #%d: ", i);
+        printf("Case #%d: ", i + 1);
         solve();
     }
 }
