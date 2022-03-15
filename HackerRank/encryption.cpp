@@ -6,8 +6,10 @@ int main()
     string s;
     getline(cin, s);
     int n = s.size();
+    
     int left = floor(sqrt(n));
     int right = ceil(sqrt(n));
+
     if (left * right < n)
         min(left, right) ? left++ : right++;
 

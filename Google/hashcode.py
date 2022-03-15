@@ -34,17 +34,32 @@ Projects = []
 
 class Working:
     def worke():
-        totalscore = 0
-        currentday = 0
         
-        while(len(Projects) > 0):
-            pass
-    
-    
-                          
+        Working.capable_employees()
         
+    def capable_employees():
+        capable_employees = []
+        projects_to_do = []
+        for person in Persons:
+            for project in Projects:
+                for skill in person.totalskills:
+                    for req_skill in project.required_skills:
+                        if skill[0] == req_skill[0] and skill[1] >= req_skill[1]:
+                            capable_employees.append((person.name, skill))
+                            projects_to_do.append((project.name, project.required_skills))
+                        
+             
+        for project in Projects:
+            for person in Persons:
+                    pass   
+        print(capable_employees)
+        print(projects_to_do)
                       
-        print(len(completed_projects))                      
+        print(len(completed_projects))
+        for completed in completed_projects:
+            for participant in completed.participants:
+                print(completed.name)
+                print(participant, end = ' ')                      
         
         
 def Algo():
