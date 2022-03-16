@@ -19,7 +19,7 @@ class mainpage:
                 os.system("CLS")
                 
             elif choice == "1": #? Admin Menu!
-                Admin.admin_menu()
+                Admin.admin_login()
                 
             elif choice == "4":
                 break

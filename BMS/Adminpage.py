@@ -1,7 +1,7 @@
 import os
 
 class Admin:
-    def admin_menu():
+    def admin_login():
         while True:
             adminname = input("Enter username: ")
             adminpass = input("Enter password: ")
