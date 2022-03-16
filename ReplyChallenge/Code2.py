@@ -14,10 +14,17 @@ def solve():
         mouse_travelled.append((int(row_cols_target[0]), int(row_cols_target[1])))
         targets.append(int(row_cols_target[2]))
         
+    COUNTER = 0
+    for i in range(len(mouse_travelled)):
+        COUNTER += coordinates.index(mouse_travelled[i])
+        DISTANCE += abs(DISTANCE - COUNTER)
+        DISTANCE -= targets[i]
+        
+             
     print(coordinates)
     print(mouse_travelled)
     print(targets)
-    
+    print(DISTANCE)
     
         
 def main():
