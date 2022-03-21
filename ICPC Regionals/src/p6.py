@@ -17,11 +17,9 @@ def solve():
    
     Values = []
     for nume in range(len(list3)):
-        if list3[nume] == 25:
-            Values.append("False")
-        else:
-            Values.append(list3[nume] in sums)
-            print(Values[nume])
+        Values.append(list3[nume] in sums)
+        print(Values[nume])
+    
     
 
 def main():
