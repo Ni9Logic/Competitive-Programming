@@ -14,21 +14,37 @@ int main()
         int counter = 1;
         for (int i = 1; i < a; i++)
         {
-            cout << i << " ";
             if (counter == 1)
-            {
-                i += 1;
+            {    
                 counter++;
                 index.push_back(i);
+                i += 1;
             }
-            else if (counter == 2)
+            if (counter == 2)
             {
+                counter++;
+                index.push_back(i);
                 i += 2;
-                counter = 1;
+            }
+            if (counter == 3){
+                counter++;
+                index.push_back(i);
+                i += 3;
+            }
+            if (counter == 4){
+                counter++;
+                index.push_back(i);
+                i += 4;
+            }
+            if (counter == 5){
+                i += 5;
+                counter++;
                 index.push_back(i);
             }
         }
 
-        cout << index[index.size() - 1] << endl;
+        for (int i = 0; i < index.size(); i++)
+            cout << index[i] << " ";
+        cout << endl;
     }
 }

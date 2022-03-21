@@ -70,10 +70,12 @@
         "valarray": "cpp"
     },
     "cSpell.ignoreWords": [
+        "nums",
         "stoi"
     ],
     "cSpell.words": [
         "arange",
+        "nume",
         "scoreofproject",
         "worke"
     ]
