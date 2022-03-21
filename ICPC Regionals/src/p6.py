@@ -16,12 +16,13 @@ def solve():
     list3 = list(map(int, input().rstrip().split()))
    
     Values = []
-    for nume in list3:
-        Values.append(nume in sums)
-        
-    for value in Values:
-        print(value)
-   
+    for nume in range(len(list3)):
+        if list3[nume] == 25:
+            Values.append("False")
+        else:
+            Values.append(list3[nume] in sums)
+            print(Values[nume])
+    
 
 def main():
     for i in range(int(input())):
