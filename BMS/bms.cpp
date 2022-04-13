@@ -15,7 +15,7 @@ struct accountcreation
 /*GLOBAL VARIABLES*/
 
 // Structure Variables
-accountcreation c_accountcreation[50];
+accountcreation users[50];
 
 // strings-Arrays
 string user, pass; // --> This is here to input username from user & password from user!
@@ -168,7 +168,7 @@ string userlogin(string &userlogin, string &userpass)
     getline(cin, userpass);
     for (int i = 0; i < 50; i++)
     {
-        if (userlogin == c_accountcreation[i].name && userpass == c_accountcreation[i].pass)
+        if (userlogin == users[i].name && userpass == users[i].pass)
         {
             check = true; // Check allows user to access user menu!
             imatch = i;   // This stores the index of the user when he logs in-
@@ -205,7 +205,7 @@ void depositt()
 to make sure what part of the user index is trying to make the changes.*/
     for (auto i = 0; i < 50; i++)
     {
-        if (pass == c_accountcreation[i].pass)
+        if (pass == users[i].pass)
         {
             letpass = true;
             imatch = i;
@@ -218,12 +218,12 @@ to make sure what part of the user index is trying to make the changes.*/
     }
     if (letpass)
     {
-        cout << "\t\t\tYour Current \u001b[1;31mBank Account Balance\u001b[1;0m is " << c_accountcreation[imatch].bankbal << " rs/-\n";
+        cout << "\t\t\tYour Current \u001b[1;31mBank Account Balance\u001b[1;0m is " << users[imatch].bankbal << " rs/-\n";
         cout << "\t\t\tEnter the amount you want to deposit: ";
         cin >> deposit;
-        const double newbal = c_accountcreation[imatch].bankbal + deposit; // Formula for depositing the amount
-        c_accountcreation[imatch].bankbal = newbal;
-        cout << "\t\t\tYour new balance after \u001b[1;31mdepositing\u001b[1;0m is: " << c_accountcreation[imatch].bankbal << " rs/-" << endl;
+        const double newbal = users[imatch].bankbal + deposit; // Formula for depositing the amount
+        users[imatch].bankbal = newbal;
+        cout << "\t\t\tYour new balance after \u001b[1;31mdepositing\u001b[1;0m is: " << users[imatch].bankbal << " rs/-" << endl;
     }
     else if (!letpass)
     {
@@ -243,7 +243,7 @@ void accountlistuser()
 to make sure what part of the user index is trying to make the changes.*/
     for (int i = 0; i < 50; i++)
     {
-        if (pass == c_accountcreation[i].pass)
+        if (pass == users[i].pass)
         {
             accountlist = true;
             imatch = i;
@@ -251,10 +251,10 @@ to make sure what part of the user index is trying to make the changes.*/
     }
     if (accountlist)
     {
-        cout << "\n\t\t\t\u001b[1;31mPassword\u001b[1;0m --> " << c_accountcreation[imatch].pass << endl;                // Edits the password of the index logged.
-        cout << "\t\t\t\u001b[1;31mBank Balance\u001b[1;0m --> " << c_accountcreation[imatch].bankbal << endl;           // Edits the Bank Balance of the index logged.
-        cout << "\t\t\t\u001b[1;31mAccount Type\u001b[1;0m --> " << c_accountcreation[imatch].accounttype << endl;       // Edits the acoount type of the index logged.
-        cout << "\t\t\t\u001b[1;31mAccount Number\u001b[1;0m --> " << c_accountcreation[imatch].accountnumber << "\n\n"; // Edits the acoount # of the index logged.
+        cout << "\n\t\t\t\u001b[1;31mPassword\u001b[1;0m --> " << users[imatch].pass << endl;                // Edits the password of the index logged.
+        cout << "\t\t\t\u001b[1;31mBank Balance\u001b[1;0m --> " << users[imatch].bankbal << endl;           // Edits the Bank Balance of the index logged.
+        cout << "\t\t\t\u001b[1;31mAccount Type\u001b[1;0m --> " << users[imatch].accounttype << endl;       // Edits the acoount type of the index logged.
+        cout << "\t\t\t\u001b[1;31mAccount Number\u001b[1;0m --> " << users[imatch].accountnumber << "\n\n"; // Edits the acoount # of the index logged.
     }
     else if (!accountlist)
     {
@@ -273,7 +273,7 @@ void withdraw()
     cin >> pass;
     for (auto i = 0; i < 50; i++)
     {
-        if (pass == c_accountcreation[i].pass)
+        if (pass == users[i].pass)
         {
             letpass = true;
             imatch = i;
@@ -287,12 +287,12 @@ void withdraw()
         switch (withdraw <= 25000) // User cannot withdraw more than 25,000 rs/- at a single time.
         {
         case true:
-            switch (withdraw <= c_accountcreation[imatch].bankbal) // If user's trying to withdraw more than he own in his bank balance.
+            switch (withdraw <= users[imatch].bankbal) // If user's trying to withdraw more than he own in his bank balance.
             {
             case true:
-                c_accountcreation[imatch].bankbal = c_accountcreation[imatch].bankbal - withdraw;
+                users[imatch].bankbal = users[imatch].bankbal - withdraw;
                 cout << "\t\t\tOperation \u001b[1;31mSuccessfully\u001b[1;0m Performed-\n\n\t\t\tYour \u001b[1;31mNew Balance\u001b[1;0m is "
-                     << "\u001b[1;31m" << c_accountcreation[imatch].bankbal << "\u001b[1;0m"
+                     << "\u001b[1;31m" << users[imatch].bankbal << "\u001b[1;0m"
                      << " rs/-\n";
                 break; // Case true of withdraw-
             case false:
@@ -301,9 +301,9 @@ void withdraw()
                     cout << "\t\t\tPlease Enter \u001b[1;31mCorrect\u001b[1;0m Amount-/ You're entering amount \u001b[1;31mmore than\u001b[1;0m you have in your bank account-\n"
                          << "\t\t\tEnter The \u001b[1;31mAmount\u001b[1;0m you want to \u001b[1;31mwithdraw\u001b[1;0m: ";
                     cin >> withdraw;
-                } while (withdraw > c_accountcreation[imatch].bankbal); // until user enter the amount he have.
+                } while (withdraw > users[imatch].bankbal); // until user enter the amount he have.
                 cout << "\t\t\tOperation \u001b[1;31mSuccessfully\u001b[1;0m Performed-\n\n\t\t\tYour \u001b[1;31mNew Balance\u001b[1;0m is "
-                     << "\u001b[1;31m" << c_accountcreation[imatch].bankbal << "\u001b[1;0m"
+                     << "\u001b[1;31m" << users[imatch].bankbal << "\u001b[1;0m"
                      << " rs/-\n";
                 break; // Case false of withdraw-
             }
@@ -331,7 +331,7 @@ void transferbal()
     cin >> pass;
     for (int i = 0; i < 50; i++)
     {
-        if (pass == c_accountcreation[i].pass)
+        if (pass == users[i].pass)
         {
             letpass = true;
             imatch = i;
@@ -349,23 +349,23 @@ void transferbal()
                 cin >> transferbal; // If user tries to transfer 0 rupess
             } while (transferbal == 0);
         }
-        if (transferbal > c_accountcreation[imatch].bankbal) // Error if user tries to transfer more than he have
+        if (transferbal > users[imatch].bankbal) // Error if user tries to transfer more than he have
         {
             do
             {
                 cout << "\t\t\tYour \u001b[1;31mcurrent account\u001b[1;0m bank balance is \u001b[1;31mless than\u001b[1;0m your desired amount to be \u001b[1;31mtransferred\u001b[1;0m\nPlease \u001b[1;31mre-enter\u001b[1;0m: ";
                 cin >> transferbal;
-            } while (transferbal > c_accountcreation[imatch].bankbal);
+            } while (transferbal > users[imatch].bankbal);
         }
-        else if (transferbal <= c_accountcreation[imatch].bankbal)
+        else if (transferbal <= users[imatch].bankbal)
         {
-            c_accountcreation[imatch].bankbal = c_accountcreation[imatch].bankbal - transferbal;
+            users[imatch].bankbal = users[imatch].bankbal - transferbal;
             bool letuser = false;
             cout << "\t\t\tEnter the \u001b[1;31mdesired\u001b[1;0m username to whom you want to \u001b[1;31mtransfer\u001b[1;0m the bank balance: ";
             cin >> user;                 // asks for the user
             for (int i = 0; i < 50; i++) // This runs to try to know the other user's index-
             {
-                if (user == c_accountcreation[imatch].name)
+                if (user == users[imatch].name)
                 {
                     letuser = true;
                     imatch1 = i;
@@ -378,9 +378,9 @@ void transferbal()
             }
             if (letuser) // This runs if user is present in the index!
             {
-                c_accountcreation[imatch1].bankbal = c_accountcreation[imatch1].bankbal + transferbal; // Formula
+                users[imatch1].bankbal = users[imatch1].bankbal + transferbal; // Formula
                 cout << "\t\t\tOperation \u001b[1;31mSuccessfully\u001b[1;0m performed-\n";
-                cout << "\t\t\tYour new balance after \u001b[1;31mTransfering balance is\u001b[1;0m is: " << c_accountcreation[imatch1].bankbal << " rs/-\n";
+                cout << "\t\t\tYour new balance after \u001b[1;31mTransfering balance is\u001b[1;0m is: " << users[imatch1].bankbal << " rs/-\n";
             }
             else
                 cout << "\n\t\t\tUser not \u001b[1;31mregistered\u001b[1;0m yet!\n";
@@ -454,23 +454,23 @@ void createaccount()
              << " ********\n"; /*Login access is a static counter*/
         cout << "\t\t\tWhat is username: ";
         cin.ignore();
-        getline(cin, c_accountcreation[i].name); // 1 -- > Login access = 0 -- > i = 0 as iteration completes
+        getline(cin, users[i].name); // 1 -- > Login access = 0 -- > i = 0 as iteration completes
         cout << "\t\t\tWhat is user password: ";
-        getline(cin, c_accountcreation[i].pass); // 2 -- > As iteration completes login access values become incremented by adding one;
+        getline(cin, users[i].pass); // 2 -- > As iteration completes login access values become incremented by adding one;
         cout << "\t\t\tEnter Account Number: ";
-        cin >> c_accountcreation[i].accountnumber; // 3 --> & by this method this loop will run infinetly as long as user keep pressing the "1" */
+        cin >> users[i].accountnumber; // 3 --> & by this method this loop will run infinetly as long as user keep pressing the "1" */
         do
         {
             cout << "\n\t\t\tWhat type of account do you want?\n\t\t\t\u001b[1;45m1\u001b[1;0m. Current Account\n\t\t\t\u001b[1;45m2\u001b[1;0m. Savings Account\n\t\t\tEnter: ";
-            cin >> c_accountcreation[i].accounttype;
-        } while (c_accountcreation[imatch].accounttype > 2);
-        switch (c_accountcreation[i].accounttype)
+            cin >> users[i].accounttype;
+        } while (users[imatch].accounttype > 2);
+        switch (users[i].accounttype)
         {
         case 1:
             cout << "\t\t\t\u001b[1;31mFor current account initial deposit should atleast be 2,000 rs/-\u001b[1;0m" << endl;
             cout << "\t\t\tEnter intial deposit: ";
-            cin >> c_accountcreation[i].bankbal;      // Current accounts needs 2,000 rs/- as an initial deposit for an account to be created
-            if (c_accountcreation[i].bankbal >= 2000) // If bankbal's greater than 2000 //Display this!
+            cin >> users[i].bankbal;      // Current accounts needs 2,000 rs/- as an initial deposit for an account to be created
+            if (users[i].bankbal >= 2000) // If bankbal's greater than 2000 //Display this!
             {
                 system("cls");
                 usercreateaccount();
@@ -489,8 +489,8 @@ void createaccount()
             cout << "\t\t\t"
                  << "\u001b[1;31mFor Savings account initial deposit should atleast be 5,000 rs/-\u001b[1;0m" << endl; // Current accounts needs 2,000 rs/- as an initial deposit for an account to be created
             cout << "\t\t\tEnter intial deposit: ";
-            cin >> c_accountcreation[i].bankbal;
-            if (c_accountcreation[i].bankbal >= 5000)
+            cin >> users[i].bankbal;
+            if (users[i].bankbal >= 5000)
             {
                 system("cls");
                 usercreateaccount();
@@ -499,7 +499,7 @@ void createaccount()
             }
             else
             {
-                c_accountcreation[i].name = " ";
+                users[i].name = " ";
                 system("cls");
                 usercreateaccount();
                 cout << "\t\t\t\u001b[1;31mYour account cannot be created!\u001b[1;0m\n\t\t\tTHANKS FOR BANKING WITH US!" << endl; // incase fails
@@ -507,12 +507,12 @@ void createaccount()
             }
             break;
         }
-        if (c_accountcreation[i].bankbal >= 5000 || c_accountcreation[i].bankbal >= 2000)
+        if (users[i].bankbal >= 5000 || users[i].bankbal >= 2000)
         {
             myfile.open("MESSEDUserscreate.txt", std::ios_base::app); // append instead of overwrite
             myfile << "\u001b[1;31m" << accountsi << "\u001b[1;0m"
-                   << "\t\t" << c_accountcreation[i].name << endl;
-            if (c_accountcreation[i].name.empty())
+                   << "\t\t" << users[i].name << endl;
+            if (users[i].name.empty())
                 accountsi--;
             myfile.close();
             // counters
@@ -534,7 +534,7 @@ void specificdetailsuser()
     cin >> user; // Admins search's the index by name!
     for (int i = 0; i < 50; i++)
     {
-        if (user == c_accountcreation[i].name)
+        if (user == users[i].name)
         {
             accountlist = true; // if Matches
             imatch = i;
@@ -553,10 +553,10 @@ void specificdetailsuser()
              << "\t\t\t\t\t\t    User Account List Menu"
              << "\u001b[1;0m" << endl; /*Display uesr's details of that index!*/
         cout << "\t\t\t*********************************************************************************\n";
-        cout << "\n\t\t\t\u001b[1;31mPassword\u001b[1;0m --> " << c_accountcreation[imatch].pass << endl;
-        cout << "\t\t\t\u001b[1;31mBank Balance\u001b[1;0m --> " << c_accountcreation[imatch].bankbal << endl;
-        cout << "\t\t\t\u001b[1;31mAccount Type\u001b[1;0m --> " << c_accountcreation[imatch].accounttype << endl;
-        cout << "\t\t\t\u001b[1;31mAccount Number\u001b[1;0m --> " << c_accountcreation[imatch].accountnumber << "\n\n";
+        cout << "\n\t\t\t\u001b[1;31mPassword\u001b[1;0m --> " << users[imatch].pass << endl;
+        cout << "\t\t\t\u001b[1;31mBank Balance\u001b[1;0m --> " << users[imatch].bankbal << endl;
+        cout << "\t\t\t\u001b[1;31mAccount Type\u001b[1;0m --> " << users[imatch].accounttype << endl;
+        cout << "\t\t\t\u001b[1;31mAccount Number\u001b[1;0m --> " << users[imatch].accountnumber << "\n\n";
     }
 }
 void accountlist()
@@ -605,7 +605,7 @@ void deleteaccount()
     user_login = false;
     for (int i = 0; i < 50; i++)
     {
-        if (user == c_accountcreation[i].name)
+        if (user == users[i].name)
         {
             check = true;
             imatch = i;
@@ -634,7 +634,7 @@ void deleteaccount()
             {
                 changed_content += input;
                 changed_content += '\n';
-                c_accountcreation[i].name = " ";
+                users[i].name = " ";
             }
 
             i++;
@@ -674,7 +674,7 @@ void modifyaccount()
     getline(cin, user);
     for (auto i = 0; i < 50; i++)
     {
-        if (user == c_accountcreation[i].name)
+        if (user == users[i].name)
         {
             check = true;
             imatch = i;
@@ -715,15 +715,15 @@ void modifyaccount()
             usermodification();
             cout << "\t\t\tEnter new \u001b[1;31mpassword\u001b[1;0m: ";
             cin.ignore();
-            getline(cin, c_accountcreation[imatch].pass);
-            if (c_accountcreation[imatch].pass.empty())
+            getline(cin, users[imatch].pass);
+            if (users[imatch].pass.empty())
             {
                 do
                 {
                     cout << "\t\t\tEnter new \u001b[1;31mpassword\u001b[1;0m: ";
                     cin.ignore();
-                    getline(cin, c_accountcreation[imatch].pass);
-                } while (c_accountcreation[imatch].pass.empty());
+                    getline(cin, users[imatch].pass);
+                } while (users[imatch].pass.empty());
             }
             cout << "\t\t\tOperation \u001b[1;31mSuccessfully\u001b[1;0m performed-\n";
             break;
@@ -731,21 +731,21 @@ void modifyaccount()
             system("cls");
             usermodification();
             cout << "\t\t\tEnter new \u001b[1;31mAccount Number\u001b[1;0m: ";
-            cin >> c_accountcreation[imatch].accountnumber;
+            cin >> users[imatch].accountnumber;
             cout << "\t\t\tOperation \u001b[1;31mSuccessfully\u001b[1;0m performed-\n";
             break;
         case 3:
             system("cls");
             usermodification();
             cout << "\t\t\tEnter new \u001b[1;31mAccount Type\u001b[1;0m: ";
-            cin >> c_accountcreation[imatch].accounttype;
-            if (c_accountcreation[imatch].accounttype > 0 && c_accountcreation[imatch].accounttype > 2)
+            cin >> users[imatch].accounttype;
+            if (users[imatch].accounttype > 0 && users[imatch].accounttype > 2)
             {
-                while (c_accountcreation[imatch].accounttype == 0 || c_accountcreation[imatch].accounttype > 2)
+                while (users[imatch].accounttype == 0 || users[imatch].accounttype > 2)
                 {
                     cout << "\t\t\tAccount Types are only 1 & 2\n"
                          << "\t\t\tPlease \u001b[1;31mre-enter\u001b[1;0m: ";
-                    cin >> c_accountcreation[imatch].accounttype;
+                    cin >> users[imatch].accounttype;
                 }
             }
             cout << "\t\t\tOperation \u001b[1;31mSuccessfully\u001b[1;0m performed-\n";
@@ -754,7 +754,7 @@ void modifyaccount()
             system("cls");
             usermodification();
             cout << "\t\t\tEnter new \u001b[1;31mBank Balance\u001b[1;0m: ";
-            cin >> c_accountcreation[imatch].bankbal;
+            cin >> users[imatch].bankbal;
             cout << "\t\t\tOperation \u001b[1;31mSuccessfully\u001b[1;0m performed-\n";
             break;
         }
@@ -849,7 +849,7 @@ int main()
             if (check)
             {
                 usermenu();
-                cout << "\t\t\tWelcome \u001b[1;31m" << c_accountcreation[imatch].name << "\u001b[1;0m!"
+                cout << "\t\t\tWelcome \u001b[1;31m" << users[imatch].name << "\u001b[1;0m!"
                      << "\n\t\t\tYou have \u001b[1;31mSuccessfully\u001b[1;0m logged in!\n\t\t\tPlease wait..." << endl;
                 Sleep(2000);
                 system("cls");
