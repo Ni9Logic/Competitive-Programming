@@ -10,5 +10,6 @@ int main()
     syscall(SYS_getcpu, &cpu, &node, NULL);
     // Display information
     printf("This program is running on CPU core %u and NUMA node %u.\n\n", cpu, node);
+    
     return 0;
 }
