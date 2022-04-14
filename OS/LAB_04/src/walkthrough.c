@@ -11,7 +11,7 @@
 
 int main()
 {
-    printf("I/O test with send file and related system calls.\n");
+    printf("I/O test with send file and related system calls.\n\n");
     printf("Allocating 64 MB buffer: ");
     char *buffer = (char *)malloc(BUFFER_SIZE); //? This buffer will contain random data in it, We don't care about that.
     printf("Done\n");
@@ -38,7 +38,8 @@ int main()
 
     //? Deleting files
     printf("Deleting Files: ");
-    unlink("buffer1", "buffer2");
+    unlink("buffer1");
+    unlink("buffer2");
     printf("Done\n");
     return 0;
 }
