@@ -75,8 +75,12 @@
     ],
     "cSpell.words": [
         "arange",
+        "myfile",
+        "NUMA",
         "nume",
+        "Rehman",
         "scoreofproject",
         "worke"
-    ]
+    ],
+    "C_Cpp.errorSquiggles": "Disabled"
 }
