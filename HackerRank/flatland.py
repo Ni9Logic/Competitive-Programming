@@ -1,23 +1,23 @@
+#! Solution is working but the code is sick worst code.
 def main():
-    mulinput = list(map(int, input().rstrip().split()))
-    cities = mulinput[0]
-    stations = mulinput[1]
-
+    n, m = list(map(int, input().rstrip().split()))
+    print(n, m)
     indexes = list(map(int, input().rstrip().split()))
-    if len(indexes) == cities:
+    if n == m:
         print(0)
         return
     distances = []
     
-    for i in range(cities):
+    for i in range(m):
+        templist = []
         for j in range(len(indexes)):
-                distances.append(abs(i - indexes[j]))
+            templist.append(abs(i - indexes[j])) 
+        distances.append(templist)
     
     final = []
-    for i in distances:
-        final.append((distances.count(i), i))
-        
-    print(max(final[1]))
+    for distance in distances:
+        final.append(min(distance))
     
+    print(max(final))
     
-main()
+main() 
