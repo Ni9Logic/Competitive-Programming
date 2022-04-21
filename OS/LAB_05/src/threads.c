@@ -7,6 +7,7 @@ void *myThread(void *vargp)
 {
     sleep(1);
     printf("Process thread is being created\n");
+    return NULL;
 }
 int main()
 {
