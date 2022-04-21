@@ -3,24 +3,24 @@
 
 using namespace std;
 
-void add(int a, int b)
+int add(int a, int b)
 {
-    cout << a + b << endl;
+    return a + b;
 }
-void sub(int a, int b)
+int sub(int a, int b)
 {
-    cout << a - b << endl;
+    return a - b;
 }
-void mul(int a, int b)
+int mul(int a, int b)
 {
-    cout << a * b << endl;
+    return a * b;
 }
-void divi(float a, float b)
+float division(float a, float b)
 {
     if (b == 0)
-        cout << b << endl;
+        return b;
     else
-        cout << a / b << endl;
+        return a / b;
 }
 
 int main()
@@ -31,14 +31,15 @@ int main()
     thread t1(add, a, b);
     thread t2(sub, a, b);
     thread t3(mul, a, b);
-    thread t4(divi, a, b);
+    thread t4(division, a, b);
 
     printf("Addition is: ");
-    printf("Deletion is: ");
-    printf("Multiplication is: ");
-    printf("Division is: ");
+    printf("\nDeletion is: ");
+    printf("\nMultiplication is: ");
+    printf("\nDivision is: ");
     t1.join();
     t2.join();
     t3.join();
     t4.join();
+    cout << endl;
 }
