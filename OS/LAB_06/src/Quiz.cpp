@@ -30,7 +30,6 @@ float division(float a, float b)
         cout << a / b;
         return a / b;
     }
-
 }
 
 int main()
@@ -38,7 +37,7 @@ int main()
     printf("Enter two interger: ");
     int a, b;
     cin >> a >> b;
-    
+
     printf("Addition is: ");
     thread t1(add, a, b);
     t1.join();
@@ -46,7 +45,7 @@ int main()
     printf("\nDeletion is: ");
     thread t2(sub, a, b);
     t2.join();
-    
+
     printf("\nMultiplication is: ");
     thread t3(mul, a, b);
     t3.join();
