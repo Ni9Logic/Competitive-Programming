@@ -34,7 +34,7 @@ float division(float a, float b)
 
 int main()
 {
-    printf("Enter two interger: ");
+    printf("Enter two integer: ");
     int a, b;
     cin >> a >> b;
 

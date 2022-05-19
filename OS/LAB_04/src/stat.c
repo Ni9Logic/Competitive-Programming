@@ -60,6 +60,5 @@ void sfile(char const filename[])
     printf((sfile.st_mode & S_IROTH) ? "r" : "-");
     printf((sfile.st_mode & S_IWOTH) ? "w" : "-");
     printf((sfile.st_mode & S_IXOTH) ? "x" : "-");
-    printf("\n");
-    
+    printf("\n"); 
 }
