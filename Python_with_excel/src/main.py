@@ -1,5 +1,4 @@
 from openpyxl import Workbook, load_workbook
-import win32com.client as win32
 
 def from_excel():
     wb = load_workbook('excel_files/FBR_Working.xlsx')
