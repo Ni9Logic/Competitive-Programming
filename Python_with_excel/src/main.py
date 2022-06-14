@@ -69,14 +69,8 @@ def from_pdf_excel():
             nwb_counter += 1
             
             noooo += 3
-
-    
+  
     New_Excel.save('excel_files/new_excels.xlsx')
-    
-    
-    #? For cell adjustments upgrade your pip using python3 -m pip install --upgrade pip
-        
-    
     
 def main():
     from_pdf_excel()
