@@ -45,32 +45,34 @@ def from_pdf_excel():
     #? Current workspace to new excel file's active sheet.
     nwa = New_Excel.active
     
-    
-    #? Extracting demo-data from table 1 currently
-    active_sheet = converted['Table 1']
-    
     #? Setting rows
     nwa['A1'].value = 'Name'
-    nwa['B2'].value = 'CNIC'
+    nwa['B1'].value = 'CNIC'
     
     #? Counters for incrementing rows
-    nwa_counter = 1
-    nwb_counter = 1
+    nwa_counter = 2
+    nwb_counter = 2
+    noooo = 1
     
-    #? Assigning names from table 1 by using appropriate incrementing of rows
-    nwa[f'A{nwa_counter}'].value = active_sheet['B1'].value
-    nwa_counter += 1
-    nwa[f'A{nwa_counter}'].value = active_sheet['D1'].value
-    nwa_counter += 1
+    for tables in range(1, len(converted.sheetnames) + 1):
+        if noooo + 3 >= len(converted.sheetnames):
+            break
+        else:
+            #? Extracting demo-data from table 1 currently
+            active_sheet = converted[f'Table {noooo}']
+            
+            #? Assigning names from tables by using appropriate incrementing of rows
+            nwa[f'A{nwa_counter}'].value = active_sheet['B1'].value
+            nwa_counter += 1
+                    
+            #? Assigning CNIC from table by using appropriate incrementing of rows
+            nwa[f'B{nwb_counter}'].value = active_sheet['D4'].value
+            nwb_counter += 1
+            
+            noooo += 3
+
     
-    #? Assigning CNIC from table 1 by using appropriate incrementing of rows
-    nwa[f'B{nwb_counter}'].value = active_sheet['B4'].value
-    nwb_counter += 1
-    nwa[f'B{nwb_counter}'].value = active_sheet['D4'].value
-    nwb_counter += 1
-    
-    
-    New_Excel.save('excel_files/new_excel.xlsx')
+    New_Excel.save('excel_files/new_excels.xlsx')
     
     
     #? For cell adjustments upgrade your pip using python3 -m pip install --upgrade pip
