@@ -1,5 +1,5 @@
 from openpyxl import Workbook, load_workbook
-import PyPDF2 as PDF
+
 
 def from_excel():
     wb = load_workbook('excel_files/FBR_Working.xlsx')
@@ -34,21 +34,20 @@ def from_excel():
     
     aB.save('excel_files/loaded.xlsx')
     wb.save('excel_files/FBR_Working.xlsx')
-def from_pdf():
+def from_pdf_excel():
     converted = load_workbook('excel_files/hamza-converted.xlsx')
     active_sheets = converted.active
-    print(len(converted.sheetnames))
-
-def learn_read_pdf():
-    pdf_file = open('excel_files/hamza.pdf', 'rb')
-    reader = PDF.PdfFileReader(pdf_file)
-    page1 = reader.getPage(0)
-    print(reader.numPages)
-    a = page1.extract_text()
-    print(a)
+    
+    counter = 0
+    for total_sheets in range(1, len(converted.sheetnames) + 1):
+        active_sheet = converted[f'Table {total_sheets}']
+        counter += 1
+    print(len(converted.sheetnames), counter)
+        
+    
     
 def main():
-    learn_read_pdf()
+    from_pdf_excel()
     
     
     
