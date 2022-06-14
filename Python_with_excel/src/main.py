@@ -35,42 +35,68 @@ def from_excel():
     wb.save('excel_files/FBR_Working.xlsx')
 def from_pdf_excel():
     #? This is loading the converted pdf file into the program!
+    
+    #* Invoice
     converted = load_workbook('excel_files/hamza-converted.xlsx')
+    invoice = converted.active
     
-    #? New Excel file in which data will be extracted from the old excel file!
-    New_Excel = Workbook()
-    New_Excel.title = "Hamza's Converted"
+    #* Copying CNIC
+    cnic_Sheet = load_workbook('excel_files/FBR.xlsx')
+    cnic = cnic_Sheet.active
     
-    #? Current workspace to new excel file's active sheet.
-    nwa = New_Excel.active
+    #* New Excel File
+    new_file = load_workbook('excel_files/New_Excels.xlsx')
+    extract = new_file.active
     
-    #? Setting rows
-    nwa['A1'].value = 'Name'
-    nwa['B1'].value = 'CNIC'
+    #! 6 counters will be needed
+    #! 1 --> Buyer CNIC
+    #! 2 --> Buyer Name 
+    #! 3 --> Document Numbers / Invoice Numbers
+    #! 4 --> Document Date / Invoice Date
+    #! 5 --> Total Quantity --> if 1 X 5 --> ctn qty else pcs qty
+    #! 6 --> Sales tax
     
-    #? Counters for incrementing rows
-    nwa_counter = 2
-    nwb_counter = 2
-    noooo = 1
+    table_inc = 1
+    buyer_name = 2
     
+    
+    #? Pasting all the names from invoices
     for tables in range(1, len(converted.sheetnames) + 1):
-        if noooo + 3 >= len(converted.sheetnames):
+        if table_inc + 3 > len(converted.sheetnames) + 1:
             break
         else:
             #? Extracting demo-data from table 1 currently
-            active_sheet = converted[f'Table {noooo}']
+            invoice = converted[f'Table {table_inc}']
+            
+            #? Distinguishing the dashes from the name 
+            if invoice['B1'].value == None and invoice['A1'].value == "Shop Information":
+                strings = list(invoice['B2'].value)
+                if '\n' in strings:
+                    strings = "".join(strings[strings.index('-') + 1:strings.index('\n')])
+                    print(strings)
+                else:
+                    strings = "".join(strings[strings.index('-') + 1::])
+                    print(strings)
+            elif invoice['B1'].value == None:
+                continue
+            else:
+                strings = list(invoice['B1'].value)
+                if '\n' in strings:
+                    strings = "".join(strings[strings.index('-') + 1:strings.index('\n')])
+                    print(strings)
+                else:
+                    strings = "".join(strings[strings.index('-') + 1::])
+                    print(strings)
+            
+           
             
             #? Assigning names from tables by using appropriate incrementing of rows
-            nwa[f'A{nwa_counter}'].value = active_sheet['B1'].value
-            nwa_counter += 1
-                    
-            #? Assigning CNIC from table by using appropriate incrementing of rows
-            nwa[f'B{nwb_counter}'].value = active_sheet['D4'].value
-            nwb_counter += 1
-            
-            noooo += 3
+            extract[f'D{buyer_name}'].value = strings
+            buyer_name += 1
+            table_inc += 3
+            print(table_inc)
   
-    New_Excel.save('excel_files/new_excels.xlsx')
+    new_file.save('excel_files/Exported.xlsx')
     
 def main():
     from_pdf_excel()
