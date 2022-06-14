@@ -56,47 +56,89 @@ def from_pdf_excel():
     #! 5 --> Total Quantity --> if 1 X 5 --> ctn qty else pcs qty
     #! 6 --> Sales tax
     
-    table_inc = 1
+    table_inc_0 = 1
     buyer_name = 2
-    
+    document_date = 2
+    invoice_num = 2
     
     #? Pasting all the names from invoices
     for tables in range(1, len(converted.sheetnames) + 1):
-        if table_inc + 3 > len(converted.sheetnames) + 1:
+        if table_inc_0 + 3 > len(converted.sheetnames) + 1:
             break
         else:
             #? Extracting demo-data from table 1 currently
-            invoice = converted[f'Table {table_inc}']
+            invoice = converted[f'Table {table_inc_0}']
             
             #? Distinguishing the dashes from the name 
             if invoice['B1'].value == None and invoice['A1'].value == "Shop Information":
                 strings = list(invoice['B2'].value)
+                #* This is the fix for the name and address on same line!
                 if '\n' in strings:
                     strings = "".join(strings[strings.index('-') + 1:strings.index('\n')])
-                    print(strings)
                 else:
                     strings = "".join(strings[strings.index('-') + 1::])
-                    print(strings)
+            #* This is the fix for empty values in name.
             elif invoice['B1'].value == None:
                 continue
+            #* This is the fix for dashes!
             else:
                 strings = list(invoice['B1'].value)
                 if '\n' in strings:
                     strings = "".join(strings[strings.index('-') + 1:strings.index('\n')])
-                    print(strings)
                 else:
                     strings = "".join(strings[strings.index('-') + 1::])
-                    print(strings)
             
            
             
             #? Assigning names from tables by using appropriate incrementing of rows
             extract[f'D{buyer_name}'].value = strings
+            
+            
+            
+            #? Assigning document dates & invoices by using appropriate incrementing of rows
+            if '\n' in str(invoice['F1'].value) and not invoice['A1'].value == "Shop Information":
+                invoice_date = str(invoice['F1'].value)
+                invoice_date = list(invoice_date[:invoice_date.index('\n')])
+                invoice_date = "".join(invoice_date)
+
+                invoice_number = str(invoice['F1'].value)
+                invoice_number = list(invoice_number[invoice_number.index('-') + 1:])
+                invoice_number = "".join(invoice_number)
+                
+                
+            elif invoice['A1'].value == "Shop Information" and invoice['B1'].value == None:
+                pass
+            elif invoice['F1'].value == None or invoice['F2'].value == None:
+                continue
+            else:
+                invoice_date = str(invoice['F1'].value)
+                invoice_date = invoice_date[:invoice_date.index('00:')]
+                invoice_date = invoice_date.replace('-', '/')
+                
+                invoice_number = str(invoice['F2'].value)
+                invoice_number = list(invoice_number[invoice_number.index('-') + 1:])
+                invoice_number = "".join(invoice_number)
+                
+            #? Assigning invoice date and invoice number from tables by using appropriate incrementing of rows
+            extract[f'I{document_date}'].value = invoice_date
+            extract[f'H{invoice_num}'].value = int(invoice_number)
+                
+                
+
+            
+            #? 3 out of 6 incrementor
             buyer_name += 1
-            table_inc += 3
-            print(table_inc)
-  
+            document_date += 1
+            invoice_num += 1
+            
+            #? Table incrementor
+            table_inc_0 += 3
+            
+            
+            #? Document Number and Date also done!
+            #? Time for a for loop for quantities 1x5 etc etc and formula for 17 percent etc etc its 130am goto sleep lol
     new_file.save('excel_files/Exported.xlsx')
+  
     
 def main():
     from_pdf_excel()
