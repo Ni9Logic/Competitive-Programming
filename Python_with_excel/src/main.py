@@ -23,14 +23,18 @@ def from_pdf_excel():
     #! 5 --> Total Quantity --> if 1 X 5 --> ctn qty else pcs qty
     #! 6 --> Sales tax
     
-    
+    #* Counters
     table_inc_0 = 1
     buyer_name = 2
     document_date = 2
     invoice_num = 2
     sales_tax = 2
+    sales_table_inc = 3    
+    quantity_incrementor = 2
+    export_quant_incrementor = 2
     
-    #? Pasting all the names from invoices
+    
+    #! Placing Names, Document Invoice Number & Document Invoice Date portion
     for tables in range(1, len(converted.sheetnames) + 1):
         if table_inc_0 + 3 > len(converted.sheetnames) + 1:
             break
@@ -102,11 +106,9 @@ def from_pdf_excel():
             
             #? Table incrementor
             table_inc_0 += 3
-            
     
     
-    #? Sales Tax also done!
-    sales_table_inc = 3    
+    #! Sales Tax Portion
     for sale in range(1, len(converted.sheetnames) + 1):
         while sales_table_inc + 3 <= len(converted.sheetnames) + 3:
             invoice = converted[f'Table {sales_table_inc}']
@@ -116,8 +118,32 @@ def from_pdf_excel():
             extract[f'O{sales_tax}'].value = sales
             sales_tax += 1
             
+    #! Quantity Portion
+    for j in range(1, len(converted.sheetnames)):
+        while quantity_incrementor + 3 <= len(converted.sheetnames) + 3:
+            invoice = converted[f'Table {quantity_incrementor}']
+
+            
+            Quantity = 0
+            #? This iterates for the product names
+            for i in range(2, len(invoice['B'])):
+                product_name = invoice[f'B{i}'].value
+                if "X 5" in product_name or "x 5" in product_name:
+                    Quantity += invoice[f'E{i}'].value
+                else:
+                    Quantity += invoice[f'F{i}'].value
+            
+            extract[f'M{export_quant_incrementor}'].value = Quantity
+            export_quant_incrementor += 1
+            quantity_incrementor += 3
+    
+    
+    #! CNIC Portion
+    #TODO CNIC Portion - hamza-converted automated hundred percent and of no use anymore.
+    #TODO Match name form FBR file and place the CNIC's accordingly 
+   
+            
     new_file.save('excel_files/Exported.xlsx')
-  
     
 def main():
     from_pdf_excel()
