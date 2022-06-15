@@ -1,38 +1,5 @@
 from openpyxl import Workbook, load_workbook
 
-def from_excel():
-    wb = load_workbook('excel_files/FBR_Working.xlsx')
-    ws = wb.active
-    
-    
-    
-    aB = Workbook()
-    aB.title = 'new_Data'
-    active_sheet_ab = aB.active
-    active_sheet_ab['A1'].value = 'CNIC'
-    
-    counter = 0
-    for i in range(1, 100):
-        if ws[f'C{i}'].value == None:
-            break
-        else:
-            active_sheet_ab[f'A{i}'] = ws[f'C{i}'].value
-            counter += 1
-            
-            
-    print(counter)
-    
-    for i in range(1, 100):
-        if active_sheet_ab[f'A{i}'].value == None:
-            break
-        else:
-            print((active_sheet_ab[f'A{i}'].value, ws[f'C{i}'].value))
-            counter += 1
-    
-    
-    
-    aB.save('excel_files/loaded.xlsx')
-    wb.save('excel_files/FBR_Working.xlsx')
 def from_pdf_excel():
     #? This is loading the converted pdf file into the program!
     
@@ -45,7 +12,7 @@ def from_pdf_excel():
     cnic = cnic_Sheet.active
     
     #* New Excel File
-    new_file = load_workbook('excel_files/New_Excels.xlsx')
+    new_file = load_workbook('excel_files/sample.xlsx')
     extract = new_file.active
     
     #! 6 counters will be needed
@@ -56,10 +23,12 @@ def from_pdf_excel():
     #! 5 --> Total Quantity --> if 1 X 5 --> ctn qty else pcs qty
     #! 6 --> Sales tax
     
+    
     table_inc_0 = 1
     buyer_name = 2
     document_date = 2
     invoice_num = 2
+    sales_tax = 2
     
     #? Pasting all the names from invoices
     for tables in range(1, len(converted.sheetnames) + 1):
@@ -134,9 +103,19 @@ def from_pdf_excel():
             #? Table incrementor
             table_inc_0 += 3
             
+    
+    
+    #? Sales Tax also done!
+    sales_table_inc = 3    
+    for sale in range(1, len(converted.sheetnames) + 1):
+        while sales_table_inc + 3 <= len(converted.sheetnames) + 3:
+            invoice = converted[f'Table {sales_table_inc}']
+            sales_table_inc += 3
+            sales = invoice['D6'].value
             
-            #? Document Number and Date also done!
-            #? Time for a for loop for quantities 1x5 etc etc and formula for 17 percent etc etc its 130am goto sleep lol
+            extract[f'O{sales_tax}'].value = sales
+            sales_tax += 1
+            
     new_file.save('excel_files/Exported.xlsx')
   
     
