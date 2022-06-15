@@ -4,7 +4,7 @@ def from_pdf_excel():
     #? This is loading the converted pdf file into the program!
     
     #* Invoice
-    converted = load_workbook('excel_files/hamza-converted.xlsx')
+    converted = load_workbook('excel_files/invoice.xlsx')
     invoice = converted.active
     
     #* Copying CNIC
@@ -128,7 +128,7 @@ def from_pdf_excel():
             #? This iterates for the product names
             for i in range(2, len(invoice['B'])):
                 product_name = invoice[f'B{i}'].value
-                if "X 5" in product_name or "x 5" in product_name:
+                if "X 5" in product_name or "x 5" in product_name or "x5" in product_name or "X5" in product_name:
                     Quantity += invoice[f'E{i}'].value
                 else:
                     Quantity += invoice[f'F{i}'].value
@@ -139,8 +139,7 @@ def from_pdf_excel():
     
     
     #! CNIC Portion
-    #TODO CNIC Portion - hamza-converted automated hundred percent and of no use anymore.
-    #TODO Match name form FBR file and place the CNIC's accordingly 
+    
    
             
     new_file.save('excel_files/Exported.xlsx')
