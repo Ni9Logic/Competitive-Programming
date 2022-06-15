@@ -1,5 +1,4 @@
 from openpyxl import load_workbook
-import string
 
 def from_pdf_excel():
     #? This is loading the converted pdf file into the program!
