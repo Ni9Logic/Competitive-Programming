@@ -36,6 +36,8 @@ def from_pdf_excel():
     sales_table_inc = 3    
     quantity_incrementor = 2
     export_quant_incrementor = 2
+    cnic_inc = 2
+    export_inc = 2
     
     
     #! Placing Names, Document Invoice Number & Document Invoice Date portion
@@ -141,16 +143,14 @@ def from_pdf_excel():
             export_quant_incrementor += 1
             quantity_incrementor += 3
     
-    # #TODO --> This portion shall be skipped when the program is running for the first time!
-    # #! CNIC Portion
+    #TODO --> This portion shall be skipped when the program is running for the first time!
+    #! CNIC Portion
     # CNIC_List = []
-    # cnic_inc = 2
     # while cnic[f'D{cnic_inc}'].value != None:
     #     cnic_name = cnic[f'D{cnic_inc}'].value
     #     cnic_number = cnic[f'C{cnic_inc}'].value
     #     CNIC_List.append([cnic_number, cnic_name])
     #     cnic_inc += 1
-    # export_inc = 2
     # while export[f'D{export_inc}'].value != None:
     #     name = export[f'D{export_inc}'].value
     #     name = name.replace('G/S', 'GENERAL STORE')
