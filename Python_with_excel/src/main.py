@@ -76,12 +76,10 @@ def from_pdf_excel():
             strings = strings.replace('C&C', 'CASH AND CARRY')
             strings = strings.replace('GS', 'GENERAL STORE')
             
-            
             strings = strings.upper()
+            
             shop_names.append(strings)
             extract[f'D{buyer_name}'].value = strings
-            
-            
             
             #? Assigning document dates & invoices by using appropriate incrementing of rows
             if '\n' in str(invoice['F1'].value) and not invoice['A1'].value == "Shop Information":
@@ -110,10 +108,6 @@ def from_pdf_excel():
             #? Assigning invoice date and invoice number from tables by using appropriate incrementing of rows
             extract[f'I{document_date}'].value = invoice_date
             extract[f'H{invoice_num}'].value = int(invoice_number)
-                
-                
-
-            
             #? 3 out of 6 incrementor
             buyer_name += 1
             document_date += 1
@@ -170,7 +164,9 @@ def from_pdf_excel():
         name = name.replace('G.STORE', 'GENERAL STORE')
         name = name.replace('C&C', 'CASH AND CARRY')
         name = name.replace('GS', 'GENERAL STORE')
+        
         name = name.upper()
+        
         for cnics in CNIC_List:
             if name in cnics:
                 extract[f'C{export_inc}'].value = cnics[0]
