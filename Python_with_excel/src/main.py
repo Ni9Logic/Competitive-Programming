@@ -1,4 +1,6 @@
 from openpyxl import load_workbook
+import timeit
+
 
 def from_pdf_excel():
     #? This is loading the converted pdf file into the program!
@@ -14,10 +16,6 @@ def from_pdf_excel():
     #* New Excel File
     new_file = load_workbook('excel_files/sample.xlsx')
     extract = new_file.active
-    
-    # #* Exported File for CNIC - Not for the first time
-    # exported = load_workbook('excel_files/Exported.xlsx')
-    # export = exported.active
     
     #! 6 counters will be needed
     #! 1 --> Buyer CNIC
@@ -39,7 +37,7 @@ def from_pdf_excel():
     cnic_inc = 2
     export_inc = 2
     
-    
+    shop_names = [] #? So that the program does not have to load the files from the exported file again!
     #! Placing Names, Document Invoice Number & Document Invoice Date portion
     for tables in range(1, len(converted.sheetnames) + 1):
         if table_inc_0 + 3 > len(converted.sheetnames) + 1:
@@ -70,6 +68,17 @@ def from_pdf_excel():
            
             
             #? Assigning names from tables by using appropriate incrementing of rows
+            strings = strings.replace('G/S', 'GENERAL STORE')
+            strings = strings.replace('S/S', 'SUPER STORE')
+            strings = strings.replace('C/C', 'CASH AND CARRY')
+            strings = strings.replace('K/S', 'KARYANA STORE')
+            strings = strings.replace('G.STORE', 'GENERAL STORE')
+            strings = strings.replace('C&C', 'CASH AND CARRY')
+            strings = strings.replace('GS', 'GENERAL STORE')
+            
+            
+            strings = strings.upper()
+            shop_names.append(strings)
             extract[f'D{buyer_name}'].value = strings
             
             
@@ -145,28 +154,45 @@ def from_pdf_excel():
     
     #TODO --> This portion shall be skipped when the program is running for the first time!
     #! CNIC Portion
-    # CNIC_List = []
-    # while cnic[f'D{cnic_inc}'].value != None:
-    #     cnic_name = cnic[f'D{cnic_inc}'].value
-    #     cnic_number = cnic[f'C{cnic_inc}'].value
-    #     CNIC_List.append([cnic_number, cnic_name])
-    #     cnic_inc += 1
-    # while export[f'D{export_inc}'].value != None:
-    #     name = export[f'D{export_inc}'].value
-    #     name = name.replace('G/S', 'GENERAL STORE')
-    #     name = name.upper()
-    #     for cnics in CNIC_List:
-    #         if name in cnics:
-    #             extract[f'C{export_inc}'].value = cnics[0]
-    #             break
-    #     export_inc += 1
+    CNIC_List = []
+    while cnic[f'D{cnic_inc}'].value != None:
+        cnic_name = cnic[f'D{cnic_inc}'].value
+        cnic_number = cnic[f'C{cnic_inc}'].value
+        CNIC_List.append([cnic_number, cnic_name])
+        cnic_inc += 1
+    
+    #? Loading names from exported file!
+    for name in shop_names:
+        name = name.replace('G/S', 'GENERAL STORE')
+        name = name.replace('S/S', 'SUPER STORE')
+        name = name.replace('C/C', 'CASH AND CARRY')
+        name = name.replace('K/S', 'KARYANA STORE')
+        name = name.replace('G.STORE', 'GENERAL STORE')
+        name = name.replace('C&C', 'CASH AND CARRY')
+        name = name.replace('GS', 'GENERAL STORE')
+        name = name.upper()
+        for cnics in CNIC_List:
+            if name in cnics:
+                extract[f'C{export_inc}'].value = cnics[0]
+                break
+        export_inc += 1
         
     
     new_file.save('excel_files/Exported.xlsx')
     
 def main():
+    #? Gets the start point
+    start = timeit.default_timer() 
+    
+    #! Actual Code
     from_pdf_excel()
     
+    #? Gets the end point
+    stop = timeit.default_timer()
+    
+    #? Extracts the time
+    execution_time = stop - start
+    print(f"Program Executed in {execution_time} secs...") # It returns time in seconds
     
     
 main()
