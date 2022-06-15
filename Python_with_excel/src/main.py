@@ -1,4 +1,5 @@
 from openpyxl import load_workbook
+import string
 
 def from_pdf_excel():
     #? This is loading the converted pdf file into the program!
@@ -14,6 +15,10 @@ def from_pdf_excel():
     #* New Excel File
     new_file = load_workbook('excel_files/sample.xlsx')
     extract = new_file.active
+    
+    #* Exported File for CNIC
+    exported = load_workbook('excel_files/Exported.xlsx')
+    export = exported.active
     
     #! 6 counters will be needed
     #! 1 --> Buyer CNIC
@@ -139,9 +144,26 @@ def from_pdf_excel():
     
     
     #! CNIC Portion
-    
+    CNIC_List = []
+    cnic_inc = 2
+    while cnic[f'D{cnic_inc}'].value != None:
+        cnic_name = cnic[f'D{cnic_inc}'].value
+        cnic_number = cnic[f'C{cnic_inc}'].value
+        CNIC_List.append([cnic_number, cnic_name])
+        cnic_inc += 1
    
-            
+    export_inc = 2
+    while export[f'D{export_inc}'].value != None:
+        name = export[f'D{export_inc}'].value
+        name = name.replace('G/S', 'GENERAL STORE')
+        name = name.upper()
+        for cnics in CNIC_List:
+            if name in cnics:
+                extract[f'C{export_inc}'].value = cnics[0]
+                break
+        export_inc += 1
+        
+    
     new_file.save('excel_files/Exported.xlsx')
     
 def main():
