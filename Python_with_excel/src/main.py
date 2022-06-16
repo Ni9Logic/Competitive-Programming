@@ -26,25 +26,25 @@ def from_pdf_excel():
     #! 6 --> Sales tax
     
     #* Counters
-    table_inc_0 = 1
-    buyer_name = 2
-    document_date = 2
-    invoice_num = 2
-    sales_tax = 2
-    sales_table_inc = 3    
-    quantity_incrementor = 2
-    export_quant_incrementor = 2
+    invoice_sheet_inc = 1
+    buyer_name_inc = 2
+    document_date_inc = 2
+    invoice_num_inc = 2
+    sales_tax_inc = 2
+    invoice_sales_inc = 3    
+    invoice_quantity_inc = 2
+    quant_inc = 2
     cnic_inc = 2
     export_inc = 2
     
     shop_names = [] #? So that the program does not have to load the files from the exported file again!
     #! Placing Names, Document Invoice Number & Document Invoice Date portion
     for tables in range(1, len(converted.sheetnames) + 1):
-        if table_inc_0 + 3 > len(converted.sheetnames) + 1:
+        if invoice_sheet_inc + 3 > len(converted.sheetnames) + 1:
             break
         else:
             #? Extracting demo-data from table 1 currently
-            invoice = converted[f'Table {table_inc_0}']
+            invoice = converted[f'Table {invoice_sheet_inc}']
             
             #? Distinguishing the dashes from the name 
             if invoice['B1'].value == None and invoice['A1'].value == "Shop Information":
@@ -79,7 +79,7 @@ def from_pdf_excel():
             strings = strings.upper()
             
             shop_names.append(strings)
-            extract[f'D{buyer_name}'].value = strings
+            extract[f'D{buyer_name_inc}'].value = strings
             
             #? Assigning document dates & invoices by using appropriate incrementing of rows
             if '\n' in str(invoice['F1'].value) and not invoice['A1'].value == "Shop Information":
@@ -106,31 +106,32 @@ def from_pdf_excel():
                 invoice_number = "".join(invoice_number)
                 
             #? Assigning invoice date and invoice number from tables by using appropriate incrementing of rows
-            extract[f'I{document_date}'].value = invoice_date
-            extract[f'H{invoice_num}'].value = int(invoice_number)
+            extract[f'I{document_date_inc}'].value = invoice_date
+            extract[f'H{invoice_num_inc}'].value = int(invoice_number)
+            
             #? 3 out of 6 incrementor
-            buyer_name += 1
-            document_date += 1
-            invoice_num += 1
+            buyer_name_inc += 1
+            document_date_inc += 1
+            invoice_num_inc += 1
             
             #? Table incrementor
-            table_inc_0 += 3
+            invoice_sheet_inc += 3
     
     
     #! Sales Tax Portion
     for sale in range(1, len(converted.sheetnames) + 1):
-        while sales_table_inc + 3 <= len(converted.sheetnames) + 3:
-            invoice = converted[f'Table {sales_table_inc}']
-            sales_table_inc += 3
+        while invoice_sales_inc + 3 <= len(converted.sheetnames) + 3:
+            invoice = converted[f'Table {invoice_sales_inc}']
+            invoice_sales_inc += 3
             sales = invoice['D6'].value
             
-            extract[f'O{sales_tax}'].value = sales
-            sales_tax += 1
+            extract[f'O{sales_tax_inc}'].value = sales
+            sales_tax_inc += 1
             
     #! Quantity Portion
     for j in range(1, len(converted.sheetnames)):
-        while quantity_incrementor + 3 <= len(converted.sheetnames) + 3:
-            invoice = converted[f'Table {quantity_incrementor}']
+        while invoice_quantity_inc + 3 <= len(converted.sheetnames) + 3:
+            invoice = converted[f'Table {invoice_quantity_inc}']
 
             
             Quantity = 0
@@ -142,9 +143,9 @@ def from_pdf_excel():
                 else:
                     Quantity += invoice[f'F{i}'].value
             
-            extract[f'M{export_quant_incrementor}'].value = Quantity
-            export_quant_incrementor += 1
-            quantity_incrementor += 3
+            extract[f'M{quant_inc}'].value = Quantity
+            quant_inc += 1
+            invoice_quantity_inc += 3
     
     #TODO --> This portion shall be skipped when the program is running for the first time!
     #! CNIC Portion
@@ -188,7 +189,7 @@ def main():
     
     #? Extracts the time
     execution_time = stop - start
-    print(f"Program Executed in {execution_time} secs...") # It returns time in seconds
+    print(f"Program Executed in {execution_time} secs...", end = '') # It returns time in seconds
     
     
 main()
