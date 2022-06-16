@@ -80,12 +80,10 @@ def from_pdf_excel():
             if "Date" in str(invoice['F1'].value):
                 if '\n' in str(invoice['G1'].value):
                     invoice_date = str(invoice['G1'].value)
-                    print(invoice_date, end = ' ')
                     invoice_date = list(invoice_date[:invoice_date.index('\n')])
                     invoice_date = "".join(invoice_date)
 
                     invoice_number = str(invoice['G1'].value)
-                    print(invoice_number, tables)
                     invoice_number = list(invoice_number[invoice_number.index('-') + 1:])
                     invoice_number = "".join(invoice_number)
                 else:
