@@ -40,6 +40,10 @@ def from_pdf_excel():
     shop_names = [] #? So that the program does not have to load the files from the exported file again!
     #! Placing Names, Document Invoice Number & Document Invoice Date portion
     for tables in range(1, len(converted.sheetnames) + 1):
+        temp = converted[f'Table {tables}']
+        if temp['A1'].value == "Shop Information" and temp['B1'].value == "Distributor Information" or temp['A1'].value == "CASH MEMO / SALE INVOICE":
+            invoice_sheet_inc += 1
+            continue
         if invoice_sheet_inc + 3 > len(converted.sheetnames) + 1:
             break
         else:
