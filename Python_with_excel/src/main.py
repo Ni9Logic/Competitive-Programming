@@ -65,6 +65,7 @@ def from_pdf_excel():
             strings = strings.replace('K/S', 'KARYANA STORE')
             strings = strings.replace('G.STORE', 'GENERAL STORE')
             strings = strings.replace('C&C', 'CASH AND CARRY')
+            strings = strings.replace(' GS', 'GENERAL STORE')
             strings = strings.replace('GS', 'GENERAL STORE')
             strings = strings.replace('Cash & Carry', 'CASH AND CARRY')
             strings = strings.replace('Cash & carry', 'CASH AND CARRY')
@@ -170,6 +171,7 @@ def from_pdf_excel():
 
     # ? Loading names from exported file!
     for name in shop_names:
+        print(name)
         name = name.replace('G/S', 'GENERAL STORE')
         name = name.replace('S/S', 'SUPER STORE')
         name = name.replace('C/C', 'CASH AND CARRY')
@@ -177,6 +179,11 @@ def from_pdf_excel():
         name = name.replace('G.STORE', 'GENERAL STORE')
         name = name.replace('C&C', 'CASH AND CARRY')
         name = name.replace('GS', 'GENERAL STORE')
+        name = name.replace(' GS', 'GENERAL STORE')
+        name = name.replace('GS', 'GENERAL STORE')
+        name = name.replace('Cash & Carry', 'CASH AND CARRY')
+        name = name.replace('Cash & carry', 'CASH AND CARRY')
+        name = name.replace('cash & carry', 'CASH AND CARRY')
 
         name = name.upper()
 
