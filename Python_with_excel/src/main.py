@@ -42,8 +42,6 @@ def from_pdf_excel():
     #! Placing Names, Document Invoice Number & Document Invoice Date portion
     print("Placing Names...")
     for tables in range(1, len(converted.sheetnames) + 1):
-        if tables == len(converted.sheetnames):
-            continue
         if invoice_sheet_inc + 3 > len(converted.sheetnames) + 3:
             break
         else:
@@ -100,12 +98,10 @@ def from_pdf_excel():
                     invoice_number = "".join(invoice_number)
             elif '\n' in str(invoice['F1'].value)  and not "Date" in str(invoice['F1'].value):
                 invoice_date = str(invoice['F1'].value)
-                print(invoice_date, end = ' ')
                 invoice_date = list(invoice_date[:invoice_date.index('\n')])
                 invoice_date = "".join(invoice_date)
 
                 invoice_number = str(invoice['F1'].value)
-                print(invoice_number, tables)
                 invoice_number = list(invoice_number[invoice_number.index('-') + 1:])
                 invoice_number = "".join(invoice_number)
             else:
