@@ -190,6 +190,7 @@ def main():
     #? Extracts the time
     execution_time = stop - start
     print(f"Program Executed in {execution_time} secs...", end = '') # It returns time in seconds
+    input("Press any key to close...")
     
     
 main()
