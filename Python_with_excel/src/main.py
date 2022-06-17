@@ -1,6 +1,8 @@
 from openpyxl import load_workbook
 import timeit
 
+def insert_dash(string, index):
+    return string[:index] + '-' + string[index:]
 
 def from_pdf_excel():
     # ? This is loading the converted pdf file into the program!
@@ -117,9 +119,17 @@ def from_pdf_excel():
             extract[f'H{invoice_num_inc}'].value = int(invoice_number)
             
             # ? Assigning cnic from invoice at the moment if cnic != 0
+            #TODO Fix CNIC Dashes problem
             if invoice['B4'].value != 0 or invoice['B4'].value != None or invoice['B4'].value != '0':
                 cnicss = invoice['B4'].value
-                if '_' in str(invoice['B4'].value):
+                if not '-' in str(invoice['B4'].value) and not '_' in str(invoice['B4'].value):
+                    if invoice['B4'].value != None or str(invoice['B4'].value) != '0' or invoice['B4'].value != 0:
+                        if cnicss != 'None' or cnicss != '0':
+                            cnicss = str(invoice['B4'].value)
+                            cnicss = insert_dash(cnicss, 5)
+                            cnicss = insert_dash(cnicss, 13)
+                            extract[f'C{another_cnic_inc}'].value = cnicss    
+                elif '_' in str(invoice['B4'].value):
                     cnicss = invoice['B4'].value
                     cnicss = cnicss.replace('_', '-')
                     extract[f'C{another_cnic_inc}'].value = cnicss
@@ -128,8 +138,7 @@ def from_pdf_excel():
             else:
                 extract[f'C{another_cnic_inc}'].value = ' '
                 
-
-            # ? 4 out of 6 incrementor
+            #? Incrementors
             buyer_name_inc += 1
             document_date_inc += 1
             invoice_num_inc += 1
@@ -229,7 +238,6 @@ def main():
     execution_time = stop - start
     # It returns time in seconds
     print(f"Program Executed in {execution_time} secs...")
-    input("Press any key to close...")
-
+    
 
 main()
