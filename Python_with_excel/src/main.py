@@ -37,10 +37,11 @@ def from_pdf_excel():
     quant_inc = 2
     cnic_inc = 2
     export_inc = 2
+    another_cnic_inc = 2
 
     shop_names = []  # ? So that the program does not have to load the files from the exported file again!
     #! Placing Names, Document Invoice Number & Document Invoice Date portion
-    print("Placing Names...")
+    print("Placing Names, CNIC, Date & Invoice Number...")
     for tables in range(1, len(converted.sheetnames) + 1):
         if invoice_sheet_inc + 3 > len(converted.sheetnames) + 3:
             break
@@ -75,7 +76,6 @@ def from_pdf_excel():
             strings = strings.upper()
 
             shop_names.append(strings)
-            extract[f'D{buyer_name_inc}'].value = strings
 
             # ? Assigning document dates & invoices by using appropriate incrementing of rows
             if "Date" in str(invoice['F1'].value):
@@ -115,11 +115,25 @@ def from_pdf_excel():
             # ? Assigning invoice date and invoice number from tables by using appropriate incrementing of rows
             extract[f'I{document_date_inc}'].value = invoice_date
             extract[f'H{invoice_num_inc}'].value = int(invoice_number)
+            
+            # ? Assigning cnic from invoice at the moment if cnic != 0
+            if invoice['B4'].value != 0 or invoice['B4'].value != None or invoice['B4'].value != '0':
+                cnicss = invoice['B4'].value
+                if '_' in str(invoice['B4'].value):
+                    cnicss = invoice['B4'].value
+                    cnicss = cnicss.replace('_', '-')
+                    extract[f'C{another_cnic_inc}'].value = cnicss
+                else:
+                    extract[f'C{another_cnic_inc}'].value = cnicss
+            else:
+                extract[f'C{another_cnic_inc}'].value = ' '
+                
 
-            # ? 3 out of 6 incrementor
+            # ? 4 out of 6 incrementor
             buyer_name_inc += 1
             document_date_inc += 1
             invoice_num_inc += 1
+            another_cnic_inc += 1
 
             # ? Table incrementor
             invoice_sheet_inc += 3
@@ -127,7 +141,7 @@ def from_pdf_excel():
     #! Sales Tax Portion
     print("Sales Tax portion")
     for sale in range(1, len(converted.sheetnames) + 1):
-        while invoice_sales_inc + 3 <= len(converted.sheetnames) + 1:
+        while invoice_sales_inc + 3 <= len(converted.sheetnames) + 4:
             invoice = converted[f'Table {invoice_sales_inc}']
             if invoice['A1'].value != None:
                 invoice_sales_inc += 2
@@ -141,7 +155,7 @@ def from_pdf_excel():
     #! Quantity Portion
     print("Quantity Portion")
     for j in range(1, len(converted.sheetnames) + 1):
-        while invoice_quantity_inc + 3 <= len(converted.sheetnames) + 3:
+        while invoice_quantity_inc + 3 <= len(converted.sheetnames) + 4:
             invoice = converted[f'Table {invoice_quantity_inc}']
             if invoice['B1'].value == "Distributor Information                                                                                 Invoice":
                 invoice_quantity_inc += 2
@@ -171,7 +185,6 @@ def from_pdf_excel():
 
     # ? Loading names from exported file!
     for name in shop_names:
-        print(name)
         name = name.replace('G/S', 'GENERAL STORE')
         name = name.replace('S/S', 'SUPER STORE')
         name = name.replace('C/C', 'CASH AND CARRY')
@@ -186,7 +199,7 @@ def from_pdf_excel():
         name = name.replace('cash & carry', 'CASH AND CARRY')
 
         name = name.upper()
-
+        extract[f'D{export_inc}'].value = name
         for cnics in CNIC_List:
             if name in cnics:
                 extract[f'C{export_inc}'].value = cnics[0]
