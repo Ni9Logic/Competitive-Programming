@@ -58,11 +58,9 @@ def program():
                 invoice.buyer_name = invoice.buyer_name.replace('Cash & Carry', 'CASH AND CARRY')
                 invoice.buyer_name = invoice.buyer_name.replace('Cash & carry', 'CASH AND CARRY')
                 invoice.buyer_name = invoice.buyer_name.replace('cash & carry', 'CASH AND CARRY')
-                invoice.buyer_name = invoice.buyer_name
                 
                 # ? Assigning CNIC
                 buyer_cnic = str(invoice_sheet['B4'].value)
-                
                 if '_' in buyer_cnic:
                     buyer_cnic = buyer_cnic.replace('_', '-')
                 elif '-' not in buyer_cnic and '_' not in buyer_cnic:
@@ -71,6 +69,48 @@ def program():
                     
                 invoice.buyer_cnic = buyer_cnic
                 
+                
+                # ? Assigning Dates
+                if "Date" not in str(invoice_sheet['F1'].value):
+                    if '\n' in str(invoice_sheet['F1'].value):
+                        date = str(invoice_sheet['F1'].value)
+                        date = list(date[:date.index('\n')])
+                        date = "".join(date)
+                        invoice.invoice_date = date
+                    else:
+                        date = str(invoice_sheet['F1'].value)
+                        invoice.invoice_date = date
+                else:
+                    if '\n' in str(invoice_sheet['G1'].value):
+                        date = str(invoice_sheet['G1'].value)
+                        date = list(date[:date.index('\n')])
+                        date = "".join(date)
+                        invoice.invoice_date = date
+                    else:
+                        date = str(invoice_sheet['G1'].value)
+                        invoice.invoice_date = date
+                
+                # ? Assigning Invoice Numbers
+                if "Date" not in str(invoice_sheet['F1'].value):
+                    if '\n' in str(invoice_sheet['F1'].value):
+                        number = str(invoice_sheet['F1'].value)
+                        number = list(number[number.index('-') + 1:])
+                        number = "".join(number)
+                        invoice.invoice_number = number
+                    else:
+                        number = str(invoice_sheet['F2'].value)
+                        invoice.invoice_number = number
+                else:
+                    if '\n' in str(invoice_sheet['G1'].value):
+                        number = str(invoice_sheet['G1'].value)
+                        number = list(number[number.index('-') + 1:])
+                        number = "".join(number)
+                        invoice.invoice_number = number
+                    else:
+                        number = str(invoice_sheet['G2'].value)
+                        invoice.invoice_number = number
+                        
+                        
         elif 'Product Code' in cell_value_A1: #! --> Quantity
             for product_i in range(2, len(invoice_sheet['B'])): #? This will iterate it through the product names.
                 product_name = invoice_sheet[f'B{product_i}'].value
@@ -93,6 +133,10 @@ def program():
         print(f"CNIC of the buyer is: {Invoice_objects[i].buyer_cnic}")
         print(f"Quantity of the buyer is: {Invoice_objects[i].total_quantity}")
         print(f"Sales Tax of the buyer is: {Invoice_objects[i].ValueAfterTax}")
+        print(f"Date of the invoice is: {Invoice_objects[i].invoice_date}")
+        print(f"Number of the invoice is: {Invoice_objects[i].invoice_number}")
+        
+        
         
         
         # export_sheet.save("excel_files/Exported_v2.xlsx")

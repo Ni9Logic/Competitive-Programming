@@ -54,6 +54,7 @@ def from_pdf_excel():
                 invoice_sheet_inc += 2
                 continue
             # * This is the fix for dashes!
+           
             else:
                 strings = list(invoice['B1'].value)
                 if '\n' in strings:
