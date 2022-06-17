@@ -50,7 +50,7 @@ def from_pdf_excel():
         else:
             # ? Extracting demo-data from table 1 currently
             invoice = converted[f'Table {invoice_sheet_inc}']
-            if invoice['A1'].value == "CASH MEMO / SALE INVOICE":
+            if invoice['A1'].value == "CASH MEMO / SALE INVOICE":
                 invoice_sheet_inc += 2
                 continue
             # * This is the fix for dashes!
