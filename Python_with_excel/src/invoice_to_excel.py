@@ -51,7 +51,7 @@ def program():
                 if '\n' in buyer_name:
                     buyer_name = "".join(buyer_name[buyer_name.index('-') + 1:buyer_name.index('\n')]) #? On new line is address we don't want that and there's a dash as well
                 else:                                                                                  
-                    buyer_name = "".join(buyer_name[buyer_name.index('-') + 1::])   #? We don't want the dash from the name.
+                    buyer_name = "".join(buyer_name[buyer_name.index('-') + 1::])   #? We don't want the dash in the file.
 
                 # ? Assigning names from tables by using appropriate incrementing of rows
                 buyer_name = buyer_name.upper()
@@ -60,10 +60,10 @@ def program():
                 
                 # ? Assigning CNIC to object
                 buyer_cnic = str(invoice_sheet['B4'].value)
-                if '_' in buyer_cnic:
+                if '_' in buyer_cnic: #? Some had underscores we remove them.
                     buyer_cnic = buyer_cnic.replace('_', '')
                 elif '-' in buyer_cnic:
-                    buyer_cnic = buyer_cnic.replace('-', '')
+                    buyer_cnic = buyer_cnic.replace('-', '') #? Some had dashes we also don't want that.
                 elif buyer_cnic == '' or buyer_cnic == None or buyer_cnic == 'None':
                     buyer_cnic == '0'
                     
@@ -150,9 +150,9 @@ def program():
             for product_i in range(2, len(invoice_sheet['B'])): #? This will iterate it through the product names.
                 product_name = invoice_sheet[f'B{product_i}'].value
                 if "X 5" in product_name or "x 5" in product_name or "x5" in product_name or "X5" in product_name:
-                    invoice.total_quantity += invoice_sheet[f'E{product_i}'].value
-                else:
-                    invoice.total_quantity += invoice_sheet[f'F{product_i}'].value
+                    invoice.total_quantity += invoice_sheet[f'E{product_i}'].value #? if x 5 found, then Add Ctn quantity
+                else: 
+                    invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity
                     
                     
         else: #! --> Sales meme invoice & shop information Sheet --> Useless & Time waste
@@ -172,7 +172,6 @@ def program():
     to_export_sheet = export_sheet.active
     
     print("Generating the third excel file...")
-
     rows = 2
     for i in range(0, len(Invoice_objects)):
         if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == None:             
@@ -184,7 +183,6 @@ def program():
         to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity
         to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax
         rows += 1
-        
     print("Saving...")    
     export_sheet.save("excel_files/Exported_v2.xlsx")
     
