@@ -176,12 +176,12 @@ def program():
     for i in range(0, len(Invoice_objects)):
         if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == None:             
             continue
-        to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name
-        to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic
-        to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number)
-        to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date
-        to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity
-        to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax
+        to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
+        to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
+        to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
+        to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
+        to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
+        to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
         rows += 1
     print("Saving...")    
     export_sheet.save("excel_files/Exported_v2.xlsx")
