@@ -25,10 +25,79 @@ class invoicee:
             self.buyer_name = self.buyer_name.replace('Cash & Carry', 'CASH AND CARRY')
             self.buyer_name = self.buyer_name.replace('Cash & carry', 'CASH AND CARRY')
             self.buyer_name = self.buyer_name.replace('cash & carry', 'CASH AND CARRY')
+            self.buyer_name = self.buyer_name.replace('W/S', 'WHOLE SALE')
+            self.buyer_name = self.buyer_name.replace('w/s', 'WHOLE SALE')
             
             return self.buyer_name
+    def correct_dates(self):
+        self.invoice_date = list(self.invoice_date)
+        month = "".join(self.invoice_date[3:5])
+
+        if self.invoice_date[0] == '0':
+            
+            del self.invoice_date[0]
+            del self.invoice_date[2:4]
+            del self.invoice_date[3:5]
+            
+            
+            if month == '01':
+                self.invoice_date.insert(2, 'Jan')
+            elif month == '02':
+                self.invoice_date.insert(2, 'Feb')
+            elif month == '03':
+                self.invoice_date.insert(2, 'Mar')
+            elif month == '04':
+                self.invoice_date.insert(2, 'Apr')
+            elif month == '05':
+                self.invoice_date.insert(2, 'May')
+            elif month == '06':
+                self.invoice_date.insert(2, 'Jun')
+            elif month == '07':
+                self.invoice_date.insert(2, 'Jul')
+            elif month == '08':
+                self.invoice_date.insert(2, 'Aug')
+            elif month == '09':
+                self.invoice_date.insert(2, 'Sep')
+            elif month == '10':
+                self.invoice_date.insert(2, 'Oct')
+            elif month == '11':
+                self.invoice_date.insert(2, 'Nov')
+            elif month == '12':
+                self.invoice_date.insert(2, 'Dec')
+                
+        else:
+            del self.invoice_date[3:5]
+            
+            if month == '01':
+                self.invoice_date.insert(3, 'Jan')
+            elif month == '02':
+                self.invoice_date.insert(3, 'Feb')
+            elif month == '03':
+                self.invoice_date.insert(3, 'Mar')
+            elif month == '04':
+                self.invoice_date.insert(3, 'Apr')
+            elif month == '05':
+                self.invoice_date.insert(3, 'May')
+            elif month == '06':
+                self.invoice_date.insert(3, 'Jun')
+            elif month == '07':
+                self.invoice_date.insert(3, 'Jul')
+            elif month == '08':
+                self.invoice_date.insert(3, 'Aug')
+            elif month == '09':
+                self.invoice_date.insert(3, 'Sep')
+            elif month == '10':
+                self.invoice_date.insert(3, 'Oct')
+            elif month == '11':
+                self.invoice_date.insert(3, 'Nov')
+            elif month == '12':
+                self.invoice_date.insert(3, 'Dec')
+
+        self.invoice_date = "".join(self.invoice_date)
         
-        
+        return self.invoice_date
+   
+         
 def program():
     animation = ["[■□□□□□□□□□]","[■■□□□□□□□□]", "[■■■□□□□□□□]", "[■■■■□□□□□□]", "[■■■■■□□□□□]", "[■■■■■■□□□□]", "[■■■■■■■□□□]", "[■■■■■■■■□□]", "[■■■■■■■■■□]", "[■■■■■■■■■■]"]
     Invoice_objects = [] #? List of objects
@@ -41,16 +110,18 @@ def program():
     invoice_sheet = converted.active 
     
     sheet_divider = 1 #! This is very useful --> It basically identifies which sheet we are in currently.
+    
     #? Creating Objects...
     sys.stdout.write("\r" + animation[6 % len(animation)])
     sys.stdout.flush()
     invoice = invoicee()
+    
     for tables in range(1, len(converted.sheetnames) + 1): #* 1 --> Length of all the worksheets we got after converting the pdf into excel.
         invoice_sheet = converted[f'Table {tables}'] #? To get all the data in invoice_sheet's object from current table.
         cell_value_A1 = invoice_sheet['A1'].value #* This makes it further identifiable on which sheet we are currently.
         
         if cell_value_A1 == None: #! --> Sales Tax Sheet very easy.
-            invoice.ValueAfterTax = invoice_sheet['D6'].value
+            invoice.ValueAfterTax = int(invoice_sheet['D6'].value)
         elif 'Name' in cell_value_A1: #! --> Main Sheet which has name, cnic, date, invoice_number, NTN
                 buyer_name = list(invoice_sheet['B1'].value)
                 if '\n' in buyer_name:
@@ -80,13 +151,19 @@ def program():
                     if '\n' in str(invoice_sheet['F1'].value): #? '\n' because the cells usually gets merged so to differentiate whats date and whats invoice number.
                         date = str(invoice_sheet['F1'].value)
                         date = list(date[:date.index('\n')])  
+                        
                         date = "".join(date)
+                        date = date.replace('/', '-')
+                        
                         invoice.invoice_date = date
+                        invoice.invoice_date = invoice.correct_dates()
+                        
                     else:
                         date = str(invoice_sheet['F1'].value)
                         date = list(date[:date.index('00:')]) #? Dates which are directly taken from the cell include '00:00:00' with them so we ignore that.
                         date = "".join(date)
-                        date = date.replace('-', '/') #? These dates have dashes in them instead of '/' so we replace the dashes with '/'
+                        date = date.replace('/', '-') #? These dates have dashes in them instead of '/' so we replace the dashes with '/'
+                        
                         year = date[:4:] #? These dates format are eg. 2022/05/31 which is wrong --> year = 2022
                         day = date[8:] #? Day = 31 
                         
@@ -97,24 +174,36 @@ def program():
                         date = date.replace(' ', '')
                         
                         invoice.invoice_date = date
+                        invoice.invoice_date = invoice.correct_dates()
+                        
                 else: # ? This means data cell is shifted towards right and now we have to pick the data from Cell G.
                     if '\n' in str(invoice_sheet['G1'].value):
                         date = str(invoice_sheet['G1'].value)
                         date = list(date[:date.index('\n')])
+                        
                         date = "".join(date)
+                        date = date.replace('/', '-')
+                        
                         invoice.invoice_date = date
+                        invoice.invoice_date = invoice.correct_dates()
                     else:
                         date = str(invoice_sheet['G1'].value)
                         date = list(date[:date.index('00:')])
                         date = "".join(date)
-                        date = date.replace('-', '/')
+                        date = date.replace('/', '-')
+                        
                         year = date[:4:]
                         day = date[8:]
+                        
+                        #* Swapping / Reshaping the dates
                         date = date.replace(day, '!')
                         date = date.replace(year, day)
                         date = date.replace('!', year)
                         date = date.replace(' ', '')
+                        
                         invoice.invoice_date = date
+                        invoice.invoice_date = invoice.correct_dates()
+                        
                 
                 # ? Assigning Invoice Numbers
                 if "Date" not in str(invoice_sheet['F1'].value): #? In some sheets the 'DATE' gets into F1 & Values move onto the next cell so this is the fix.
@@ -168,9 +257,7 @@ def program():
         if sheet_divider == 1: #? (2 != 1), (3 != 1), (1 == 1)
             Invoice_objects.append(invoice)
             invoice = invoicee()
-
-
-
+    
     #? Exporting the object's values into the excel file...
     # * File to export
     sys.stdout.write("\r" + animation[7 % len(animation)])
@@ -203,6 +290,7 @@ def main():
     stop = default_timer()
     
     total = stop - start
+    total = round(total)
     
     print(f"\nYour program took total of {total} seconds to complete...")
     input("Press any key to continue...")
