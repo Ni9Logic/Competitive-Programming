@@ -1,3 +1,4 @@
+from json import load
 from timeit import default_timer
 from openpyxl import load_workbook
 import sys
@@ -63,10 +64,11 @@ class invoicee:
             elif month == '11':
                 self.invoice_date.insert(2, 'Nov')
             elif month == '12':
-                self.invoice_date.insert(2, 'Dec')
+                self.invoice_date.insert(2, 'Dec') #? 01--2022
                 
         else:
-            del self.invoice_date[3:5]
+            del self.invoice_date[3:5] #? 01--2022
+            del self.invoice_date[4:6] #? 01--22
             
             if month == '01':
                 self.invoice_date.insert(3, 'Jan')
@@ -112,7 +114,7 @@ def program():
     sheet_divider = 1 #! This is very useful --> It basically identifies which sheet we are in currently.
     
     #? Creating Objects...
-    sys.stdout.write("\r" + animation[6 % len(animation)])
+    sys.stdout.write("\r" + animation[4 % len(animation)])
     sys.stdout.flush()
     invoice = invoicee()
     
@@ -258,15 +260,18 @@ def program():
             Invoice_objects.append(invoice)
             invoice = invoicee()
     
+    
     #? Exporting the object's values into the excel file...
     # * File to export
-    sys.stdout.write("\r" + animation[7 % len(animation)])
+    sys.stdout.write("\r" + animation[5 % len(animation)])
     sys.stdout.flush()
     export_sheet = load_workbook('excel_files/sample.xlsx') #? File to Save later on
     to_export_sheet = export_sheet.active
     
-    sys.stdout.write("\r" + animation[8 % len(animation)])
+    sys.stdout.write("\r" + animation[6 % len(animation)])
     sys.stdout.flush()
+    
+    
     rows = 2
     for i in range(0, len(Invoice_objects)):
         if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None':             
