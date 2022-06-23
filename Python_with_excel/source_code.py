@@ -1,4 +1,3 @@
-from json import load
 from timeit import default_timer
 from openpyxl import load_workbook
 import sys
@@ -98,12 +97,10 @@ class invoicee:
         self.invoice_date = "".join(self.invoice_date)
         
         return self.invoice_date
-   
-         
+
 def program():
     animation = ["[■□□□□□□□□□]","[■■□□□□□□□□]", "[■■■□□□□□□□]", "[■■■■□□□□□□]", "[■■■■■□□□□□]", "[■■■■■■□□□□]", "[■■■■■■■□□□]", "[■■■■■■■■□□]", "[■■■■■■■■■□]", "[■■■■■■■■■■]"]
     Invoice_objects = [] #? List of objects
-    
     print("Loading: ")
     sys.stdout.write("\r" + animation[1 % len(animation)])
     sys.stdout.flush()
