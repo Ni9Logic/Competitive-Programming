@@ -269,9 +269,27 @@ def program():
     sys.stdout.flush()
     
     
+    #? Ctrl_F file process
+    # ctrl_f = load_workbook('excel_files/FBR CTRL+F.xlsx')
+    # ctrl_sheet = ctrl_f.active
+    
+    # list_cnic = []
+    # rows = 2
+    
+    # while ctrl_sheet[f'D{rows}'].value is not None:
+    #     cnic_name = ctrl_sheet[f'D{rows}'].value
+    #     cnic_num = ctrl_sheet[f'C{rows}'].value
+    #     if cnic_num is None:
+    #         continue
+    #     cnic_num = cnic_num.replace('-', '')
+    #     list_cnic.append((cnic_name, cnic_num))
+    #     rows += 1
+    #! ---------> Working ---------->
+    
+    
     rows = 2
     for i in range(0, len(Invoice_objects)):
-        if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None':             
+        if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic is None:             
             continue
         to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
         to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
