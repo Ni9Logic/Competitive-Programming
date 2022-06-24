@@ -107,6 +107,43 @@ class invoicee:
         self.invoice_date = "".join(self.invoice_date)
         
         return self.invoice_date
+    def store_names(self):
+        fbr = load_workbook('excel_files/fbr.xlsx')
+        fbr_sheet = fbr.active
+        exported = load_workbook('excel_files/Exported_v2.xlsx')
+        exported_sheet = exported.active
+        
+        
+        fbr_shop_names = []
+        exported_shop_names = []
+        
+        rows = 2
+        while fbr_sheet[f'D{rows}'].value != None:
+            fbr_shop_names.append([fbr_sheet[f'C{rows}'].value, fbr_sheet[f'D{rows}'].value, rows])
+            rows += 1
+
+
+        rows = 2
+        while exported_sheet[f'D{rows}'].value != None:
+            exported_shop_names.append([exported_sheet[f'C{rows}'].value, exported_sheet[f'D{rows}'].value, rows])
+            rows += 1
+            
+            
+        for exported_shops in exported_shop_names:
+            for fbr_shops in fbr_shop_names:
+                if fbr_shops[0] == '0' or fbr_shops[0] == '' or fbr_shops[0] is None:
+                    continue
+                if exported_shops[1] == fbr_shops[1] and exported_shops[0] == '0' or exported_shops[0] == 'None':
+                    fbr_shops[0] = fbr_shops[0].replace('-', '')
+                    exported_sheet[f'C{exported_shops[2]}'].value = fbr_shops[0]
+                    exported_shops[0] = fbr_shops[0]
+            
+        exported.save('excel_files/Exported_v2.xlsx')
+        return exported_shops
+                
+        
+            
+            
 
 def program():
     animation = ["[■□□□□□□□□□]","[■■□□□□□□□□]", "[■■■□□□□□□□]", "[■■■■□□□□□□]", "[■■■■■□□□□□]", "[■■■■■■□□□□]", "[■■■■■■■□□□]", "[■■■■■■■■□□]", "[■■■■■■■■■□]", "[■■■■■■■■■■]"]
@@ -279,9 +316,10 @@ def program():
     sys.stdout.flush()
     
     rows = 2
+
     for i in range(0, len(Invoice_objects)):
-        if Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '0':
-           continue
+        if Invoice_objects[i].buyer_cnic is None or Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None':
+            continue
         to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
         to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
         to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
@@ -294,6 +332,9 @@ def program():
     
     export_sheet.save("excel_files/Exported_v2.xlsx")
     
+    
+    
+        
     # exported_sheet = load_workbook('excel_files/Exported_v2.xlsx')
     # new = export_sheet.active
     # rows = 2
@@ -312,6 +353,7 @@ def program():
 def main():
     start = default_timer()
     program()
+    # invoicee.store_names(invoicee)
     stop = default_timer()
     
     total = stop - start
