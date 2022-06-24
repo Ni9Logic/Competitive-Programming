@@ -1,8 +1,11 @@
+# import pymysql
 from timeit import default_timer
 from openpyxl import load_workbook
 import sys
 import time
 
+# db = pymysql.connect(host='localhost',user='admin',password='root',database='fbr')
+# cursor = db.cursor()
 class invoicee:
     def __init__(self):
         self.buyer_name = ''
@@ -27,6 +30,13 @@ class invoicee:
             self.buyer_name = self.buyer_name.replace('cash & carry', 'CASH AND CARRY')
             self.buyer_name = self.buyer_name.replace('W/S', 'WHOLE SALE')
             self.buyer_name = self.buyer_name.replace('w/s', 'WHOLE SALE')
+            self.buyer_name = self.buyer_name.replace('TRD.', 'TRADER')
+            self.buyer_name = self.buyer_name.replace('trd.', 'TRADER')
+            self.buyer_name = self.buyer_name.replace('TRD', 'TRADER')
+            self.buyer_name = self.buyer_name.replace('trd', 'TRADER')
+            
+            
+            
             
             return self.buyer_name
     def correct_dates(self):
@@ -268,41 +278,36 @@ def program():
     sys.stdout.write("\r" + animation[6 % len(animation)])
     sys.stdout.flush()
     
-    
-    #? Ctrl_F file process
-    # ctrl_f = load_workbook('excel_files/FBR CTRL+F.xlsx')
-    # ctrl_sheet = ctrl_f.active
-    
-    # list_cnic = []
-    # rows = 2
-    
-    # while ctrl_sheet[f'D{rows}'].value is not None:
-    #     cnic_name = ctrl_sheet[f'D{rows}'].value
-    #     cnic_num = ctrl_sheet[f'C{rows}'].value
-    #     if cnic_num is None:
-    #         continue
-    #     cnic_num = cnic_num.replace('-', '')
-    #     list_cnic.append((cnic_name, cnic_num))
-    #     rows += 1
-    #! ---------> Working ---------->
-    
-    
     rows = 2
     for i in range(0, len(Invoice_objects)):
-        if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic is None:             
-            continue
+        if Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '0':
+           continue
         to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
         to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
         to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
         to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
         to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
         to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
+
         rows += 1
+        
     
     export_sheet.save("excel_files/Exported_v2.xlsx")
+    
+    # exported_sheet = load_workbook('excel_files/Exported_v2.xlsx')
+    # new = export_sheet.active
+    # rows = 2
+    # for k in range(len(new[f'D'])):
+    #     if new[f'C{rows}'].value == 'None' or new[f'C{rows}'].value == '0' or new[f'C{rows}'].value is None:
+    #         query = "SELECT Buyer_Name, Buyer_CNIC from fbr_ctrl_f where Buyer_Name IS NOT NULL AND Buyer_CNIC IS NOT NULL AND Buyer_Name like %s"
+    #         cursor.execute(query, new[f'D{rows}'].value)
+    #         new_cnic = cursor.fetchone()
+    #         new[f'D{rows}'].value = new_cnic
+    #     rows += 1
     time.sleep(0.2)
     sys.stdout.write("\r" + animation[9 % len(animation)])
     sys.stdout.flush()
+
 
 def main():
     start = default_timer()
