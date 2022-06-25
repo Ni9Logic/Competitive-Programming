@@ -290,9 +290,9 @@ def program():
     rows = 2
 
     for i in range(0, len(Invoice_objects)):
-        if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None':
-            Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names)
-            if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '':
+        if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
+            Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names) #? Searches for cnic in fbr.xlsx
+            if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '': #? If still not found we don't want it.
                 continue
             
         #? If buyer_name found in fbr.xlsx and buyer_cnic is empty then it takes the cnic from the fbr file.
@@ -304,22 +304,22 @@ def program():
         to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
 
         rows += 1
-        
+    #? Saves it. 
     export_sheet.save("Generated_FBR.xlsx")
     stdout.write("\r" + animation[9 % len(animation)])
     stdout.flush()
 
 
 def main():
-    start = default_timer()
+    start = default_timer() #? Starts a timer
     program()
-    stop = default_timer()
+    stop = default_timer() #? Stops a timer.
     
-    total = stop - start
-    total = round(total)
+    total = stop - start #? Total time program took.
+    total = round(total) #? Value is returned in highly precised float method thats why we want to round it.
     
     print(f"\nYour program took total of {total} seconds to complete...")
-    input("Press any key to continue...")
+    input("Press any key to continue...") #? So the user can know if his program is completed or not.
     
     
 if __name__ == "__main__":
