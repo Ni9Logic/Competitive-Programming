@@ -312,7 +312,7 @@ def program():
 
         rows += 1
         
-    export_sheet.save("Logic_saxy.xlsx")
+    export_sheet.save("Generated_FBR.xlsx")
     stdout.write("\r" + animation[9 % len(animation)])
     stdout.flush()
 
