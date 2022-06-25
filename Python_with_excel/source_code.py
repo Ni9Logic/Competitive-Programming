@@ -309,8 +309,7 @@ def program():
     stdout.write("\r" + animation[9 % len(animation)])
     stdout.flush()
 
-
-def main():
+if __name__ == "__main__":
     start = default_timer() #? Starts a timer
     program()
     stop = default_timer() #? Stops a timer.
@@ -320,7 +319,3 @@ def main():
     
     print(f"\nYour program took total of {total} seconds to complete...")
     input("Press any key to continue...") #? So the user can know if his program is completed or not.
-    
-    
-if __name__ == "__main__":
-    main()
