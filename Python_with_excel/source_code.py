@@ -21,7 +21,7 @@ class invoicee:
             self.buyer_name = self.buyer_name.replace('G.STORE', 'GENERAL STORE')
             self.buyer_name = self.buyer_name.replace('C&C', 'CASH AND CARRY')
             self.buyer_name = self.buyer_name.replace(' GS', 'GENERAL STORE')
-            self.buyer_name = self.buyer_name.replace('GS', 'GENERAL STORE')
+            self.buyer_name = self.buyer_name.replace('GS', ' GENERAL STORE')
             self.buyer_name = self.buyer_name.replace('Cash & Carry', 'CASH AND CARRY')
             self.buyer_name = self.buyer_name.replace('Cash & carry', 'CASH AND CARRY')
             self.buyer_name = self.buyer_name.replace('cash & carry', 'CASH AND CARRY')
