@@ -14,6 +14,7 @@ class invoicee:
         
     def correct_buyer_names(self):
             self.buyer_name = self.buyer_name.replace('G/S', 'GENERAL STORE')
+            self.buyer_name = self.buyer_name.replace('g/s', ' GENERAL STORE')
             self.buyer_name = self.buyer_name.replace('S/S', 'SUPER STORE')
             self.buyer_name = self.buyer_name.replace('C/C', 'CASH AND CARRY')
             self.buyer_name = self.buyer_name.replace('K/S', 'KARYANA STORE')
