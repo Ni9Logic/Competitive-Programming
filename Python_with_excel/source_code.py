@@ -32,10 +32,6 @@ class invoicee:
             self.buyer_name = self.buyer_name.replace('trd.', 'TRADER')
             self.buyer_name = self.buyer_name.replace('TRD', 'TRADER')
             self.buyer_name = self.buyer_name.replace('trd', 'TRADER')
-            
-            
-            
-            
             return self.buyer_name
     def correct_dates(self):
         self.invoice_date = list(self.invoice_date)
