@@ -1,11 +1,8 @@
-# import pymysql
 from timeit import default_timer
 from openpyxl import load_workbook
 import sys
 import time
 
-# db = pymysql.connect(host='localhost',user='admin',password='root',database='fbr')
-# cursor = db.cursor()
 class invoicee:
     def __init__(self):
         self.buyer_name = ''
@@ -107,39 +104,15 @@ class invoicee:
         self.invoice_date = "".join(self.invoice_date)
         
         return self.invoice_date
-    def store_names(self):
-        fbr = load_workbook('excel_files/fbr.xlsx')
-        fbr_sheet = fbr.active
-        exported = load_workbook('excel_files/Exported_v2.xlsx')
-        exported_sheet = exported.active
-        
-        
-        fbr_shop_names = []
-        exported_shop_names = []
-        
-        rows = 2
-        while fbr_sheet[f'D{rows}'].value != None:
-            fbr_shop_names.append([fbr_sheet[f'C{rows}'].value, fbr_sheet[f'D{rows}'].value, rows])
-            rows += 1
-
-
-        rows = 2
-        while exported_sheet[f'D{rows}'].value != None:
-            exported_shop_names.append([exported_sheet[f'C{rows}'].value, exported_sheet[f'D{rows}'].value, rows])
-            rows += 1
+    def ctrl_f(shop_name : str, shop_cnic : str, fbr_shop_names : list) -> str:
+        for fbr_shops in fbr_shop_names:
+            if fbr_shops[0] == '0' or fbr_shops[0] == '' or fbr_shops[0] is None:
+                continue
+            if shop_name == fbr_shops[1] and shop_cnic == '0' or shop_cnic == 'None':
+                fbr_shops[0] = fbr_shops[0].replace('-', '')
+                shop_cnic = fbr_shops[0]
             
-            
-        for exported_shops in exported_shop_names:
-            for fbr_shops in fbr_shop_names:
-                if fbr_shops[0] == '0' or fbr_shops[0] == '' or fbr_shops[0] is None:
-                    continue
-                if exported_shops[1] == fbr_shops[1] and exported_shops[0] == '0' or exported_shops[0] == 'None':
-                    fbr_shops[0] = fbr_shops[0].replace('-', '')
-                    exported_sheet[f'C{exported_shops[2]}'].value = fbr_shops[0]
-                    exported_shops[0] = fbr_shops[0]
-            
-        exported.save('excel_files/Exported_v2.xlsx')
-        return exported_shops
+        return shop_cnic
                 
         
             
@@ -151,9 +124,22 @@ def program():
     print("Loading: ")
     sys.stdout.write("\r" + animation[1 % len(animation)])
     sys.stdout.flush()
+    
     # * Invoice
     converted = load_workbook('excel_files/invoice.xlsx') #? Loading converted pdf's invoice.
     invoice_sheet = converted.active 
+    
+    #* FBR File
+    fbr = load_workbook('excel_files/fbr.xlsx')
+    fbr_sheet = fbr.active
+        
+    fbr_shop_names = []
+        
+    rows = 2
+    while fbr_sheet[f'D{rows}'].value != None:
+        fbr_shop_names.append([fbr_sheet[f'C{rows}'].value, fbr_sheet[f'D{rows}'].value, rows])
+        rows += 1
+
     
     sheet_divider = 1 #! This is very useful --> It basically identifies which sheet we are in currently.
     
@@ -283,18 +269,14 @@ def program():
                     invoice.NTN = NTN
                 else:
                     NTN = str(invoice_sheet['B2'].value)
-                    invoice.NTN = NTN
-                    
-                        
+                    invoice.NTN = NTN                                   
         elif 'Product Code' in cell_value_A1: #! --> Quantity's Sheet
             for product_i in range(2, len(invoice_sheet['B'])): #? This will iterate it through the product names.
                 product_name = invoice_sheet[f'B{product_i}'].value
                 if "X 5" in product_name or "x 5" in product_name or "x5" in product_name or "X5" in product_name:
                     invoice.total_quantity += invoice_sheet[f'E{product_i}'].value #? if x 5 found, then Add Ctn quantity
                 else: 
-                    invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity
-                    
-                    
+                    invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity                 
         else: #! --> Sales meme invoice & shop information Sheet --> Useless & Time waste
             continue
         
@@ -318,8 +300,12 @@ def program():
     rows = 2
 
     for i in range(0, len(Invoice_objects)):
-        if Invoice_objects[i].buyer_cnic is None or Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None':
-            continue
+        if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None':
+            Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names)
+            if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '':
+                continue
+            
+        #? If buyer_name found in fbr.xlsx and buyer_cnic is empty then it takes the cnic from the fbr file.
         to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
         to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
         to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
@@ -329,22 +315,7 @@ def program():
 
         rows += 1
         
-    
     export_sheet.save("excel_files/Exported_v2.xlsx")
-    
-    
-    
-        
-    # exported_sheet = load_workbook('excel_files/Exported_v2.xlsx')
-    # new = export_sheet.active
-    # rows = 2
-    # for k in range(len(new[f'D'])):
-    #     if new[f'C{rows}'].value == 'None' or new[f'C{rows}'].value == '0' or new[f'C{rows}'].value is None:
-    #         query = "SELECT Buyer_Name, Buyer_CNIC from fbr_ctrl_f where Buyer_Name IS NOT NULL AND Buyer_CNIC IS NOT NULL AND Buyer_Name like %s"
-    #         cursor.execute(query, new[f'D{rows}'].value)
-    #         new_cnic = cursor.fetchone()
-    #         new[f'D{rows}'].value = new_cnic
-    #     rows += 1
     time.sleep(0.2)
     sys.stdout.write("\r" + animation[9 % len(animation)])
     sys.stdout.flush()
@@ -353,7 +324,6 @@ def program():
 def main():
     start = default_timer()
     program()
-    # invoicee.store_names(invoicee)
     stop = default_timer()
     
     total = stop - start
@@ -363,4 +333,5 @@ def main():
     input("Press any key to continue...")
     
     
-main()
+if __name__ == "__main__":
+    main()
