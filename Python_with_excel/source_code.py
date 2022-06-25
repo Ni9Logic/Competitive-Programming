@@ -10,8 +10,7 @@ class invoicee:
         self.invoice_number = 0
         self.total_quantity = 0
         self.ValueAfterTax = 0
-        self.NTN = 0
-        
+        self.NTN = 0    
     def correct_buyer_names(self):
             self.buyer_name = self.buyer_name.replace('G/S', 'GENERAL STORE')
             self.buyer_name = self.buyer_name.replace('g/s', ' GENERAL STORE')
@@ -111,10 +110,6 @@ class invoicee:
             
         return shop_cnic
                 
-        
-            
-            
-
 def program():
     animation = ["[■□□□□□□□□□]","[■■□□□□□□□□]", "[■■■□□□□□□□]", "[■■■■□□□□□□]", "[■■■■■□□□□□]", "[■■■■■■□□□□]", "[■■■■■■■□□□]", "[■■■■■■■■□□]", "[■■■■■■■■■□]", "[■■■■■■■■■■]"]
     Invoice_objects = [] #? List of objects
