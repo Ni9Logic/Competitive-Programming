@@ -317,8 +317,8 @@ def program():
         
     export_sheet.save("excel_files/Exported_v2.xlsx")
     time.sleep(0.2)
-    sys.stdout.write("\r" + animation[9 % len(animation)])
-    sys.stdout.flush()
+    stdout.write("\r" + animation[9 % len(animation)])
+    stdout.flush()
 
 
 def main():
