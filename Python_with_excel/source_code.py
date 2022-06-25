@@ -131,7 +131,7 @@ def program():
         rows += 1
 
     
-    sheet_divider = 1 #! This is very useful --> It basically identifies which sheet we are in currently.
+    sheet_divider = 1 #! This is very useful --> There are multiple work sheets in Invoice File so this helps us create a single object from three work sheets.
     
     #? Creating Objects...
     stdout.write("\r" + animation[4 % len(animation)])
