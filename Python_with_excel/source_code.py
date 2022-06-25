@@ -66,8 +66,7 @@ class invoicee:
             elif month == '11':
                 self.invoice_date.insert(2, 'Nov')
             elif month == '12':
-                self.invoice_date.insert(2, 'Dec') #? 01--2022
-                
+                self.invoice_date.insert(2, 'Dec') #? 01--2022               
         else:
             del self.invoice_date[3:5] #? 01--2022
             del self.invoice_date[4:6] #? 01--22
@@ -98,7 +97,6 @@ class invoicee:
                 self.invoice_date.insert(3, 'Dec')
 
         self.invoice_date = "".join(self.invoice_date)
-        
         return self.invoice_date
     def ctrl_f(shop_name : str, shop_cnic : str, fbr_shop_names : list) -> str:
         for fbr_shops in fbr_shop_names:
