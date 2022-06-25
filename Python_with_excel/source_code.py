@@ -1,7 +1,6 @@
 from timeit import default_timer
 from openpyxl import load_workbook
-import sys
-import time
+from sys import stdout
 
 class invoicee:
     def __init__(self):
@@ -123,8 +122,8 @@ def program():
     animation = ["[■□□□□□□□□□]","[■■□□□□□□□□]", "[■■■□□□□□□□]", "[■■■■□□□□□□]", "[■■■■■□□□□□]", "[■■■■■■□□□□]", "[■■■■■■■□□□]", "[■■■■■■■■□□]", "[■■■■■■■■■□]", "[■■■■■■■■■■]"]
     Invoice_objects = [] #? List of objects
     print("Loading: ")
-    sys.stdout.write("\r" + animation[1 % len(animation)])
-    sys.stdout.flush()
+    stdout.write("\r" + animation[1 % len(animation)])
+    stdout.flush()
     
     # * Invoice
     converted = load_workbook('excel_files/invoice.xlsx') #? Loading converted pdf's invoice.
@@ -145,8 +144,8 @@ def program():
     sheet_divider = 1 #! This is very useful --> It basically identifies which sheet we are in currently.
     
     #? Creating Objects...
-    sys.stdout.write("\r" + animation[4 % len(animation)])
-    sys.stdout.flush()
+    stdout.write("\r" + animation[4 % len(animation)])
+    stdout.flush()
     invoice = invoicee()
     
     for tables in range(1, len(converted.sheetnames) + 1): #* 1 --> Length of all the worksheets we got after converting the pdf into excel.
@@ -290,13 +289,13 @@ def program():
     
     #? Exporting the object's values into the excel file...
     # * File to export
-    sys.stdout.write("\r" + animation[5 % len(animation)])
-    sys.stdout.flush()
+    stdout.write("\r" + animation[5 % len(animation)])
+    stdout.flush()
     export_sheet = load_workbook('excel_files/sample.xlsx') #? File to Save later on
     to_export_sheet = export_sheet.active
     
-    sys.stdout.write("\r" + animation[6 % len(animation)])
-    sys.stdout.flush()
+    stdout.write("\r" + animation[6 % len(animation)])
+    stdout.flush()
     
     rows = 2
 
