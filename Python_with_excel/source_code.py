@@ -1,6 +1,7 @@
 from timeit import default_timer
 from openpyxl import load_workbook
-from sys import stdout
+from loader import Loader
+from time import sleep
 import pymysql
 
 class invoicee:
@@ -116,6 +117,7 @@ class invoicee:
         return shop_cnic
                 
 def program():
+    loader = Loader("Connecting to FBR database...", "Connected to Fbr database!", 0.05).start()
     # To connect MySQL database
     conn = pymysql.connect(
         host='localhost',
@@ -124,17 +126,18 @@ def program():
         db='fbr',
         )
     
-    animation = ["[■□□□□□□□□□]","[■■□□□□□□□□]", "[■■■□□□□□□□]", "[■■■■□□□□□□]", "[■■■■■□□□□□]", "[■■■■■■□□□□]", "[■■■■■■■□□□]", "[■■■■■■■■□□]", "[■■■■■■■■■□]", "[■■■■■■■■■■]"]
+    loader.stop()
+    
+    
     Invoice_objects = [] #? List of objects
-    print("Loading: ")
-    stdout.write("\r" + animation[1 % len(animation)])
-    stdout.flush()
     
     # * Invoice
+    loader = Loader("Opening the Invoice.xlsx file...", "Opened the Invoice.xlsx file!", 0.05).start()
     converted = load_workbook('excel_files/invoice.xlsx') #? Loading converted pdf's invoice.
     invoice_sheet = converted.active 
-    
+    loader.stop()
     #* FBR DB
+    loader = Loader("Loading Data from FBR database...", "Done loading data from FBR Database!", 0.05).start()
     cur = conn.cursor()
     
     query = "SELECT Buyer_Name from fbr"
@@ -144,12 +147,11 @@ def program():
     cur.execute(query)
     fbr_shop_cnics = [item[0] for item in cur.fetchall()]
         
-
+    loader.stop()
     sheet_divider = 1 #! This is very useful --> There are multiple work sheets in Invoice File so this helps us create a single object from three work sheets.
     
     #? Creating Objects...
-    stdout.write("\r" + animation[4 % len(animation)])
-    stdout.flush()
+    loader = Loader("Storing each invoice's data in its separate object...", "Objects Created!", 0.05).start()
     invoice = invoicee()
     
     for tables in range(1, len(converted.sheetnames) + 1): #* 1 --> Length of all the worksheets we got after converting the pdf into excel.
@@ -290,19 +292,17 @@ def program():
             Invoice_objects.append(invoice)
             invoice = invoicee()
     
+    loader.stop()
     
     #? Exporting the object's values into the excel file...
     # * File to export
-    stdout.write("\r" + animation[5 % len(animation)])
-    stdout.flush()
+    loader = Loader("Looking into the sample file...", "Loaded Sample File!", 0.05).start()
     export_sheet = load_workbook('excel_files/sample.xlsx') #? File to Save later on
     to_export_sheet = export_sheet.active
+    loader.stop()
     
-    stdout.write("\r" + animation[6 % len(animation)])
-    stdout.flush()
-    
+    loader = Loader("Information stored in objects is being fetched into the excel file...", "Transfer Successful!", 0.05).start()
     rows = 2
-
     for i in range(0, len(Invoice_objects)):
         if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
             Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(cur, Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names, fbr_shop_cnics) #? Searches for cnic in fbr.xlsx
@@ -320,13 +320,12 @@ def program():
         rows += 1
         
     #? Saves it. 
+    loader.stop()
     conn.commit() #? Updates the fbr file as well
     conn.close() #! To close the connection
-    
+    loader = Loader("Saving & Committing everything...", "File generated successfully & FBR database updated as well!", 0.05).start()
     export_sheet.save("Generated_FBR.xlsx")
-    stdout.write("\r" + animation[9 % len(animation)])
-    stdout.flush()
-
+    loader.stop()
 if __name__ == "__main__":
     start = default_timer() #? Starts a timer
     program()
