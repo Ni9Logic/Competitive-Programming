@@ -303,12 +303,12 @@ def program():
     
     loader = Loader("Information stored in objects is being fetched into the excel file...", "Transfer Successful!", 0.05).start()
     rows = 2
+    
     for i in range(0, len(Invoice_objects)):
         if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
             Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(cur, Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names, fbr_shop_cnics) #? Searches for cnic in fbr.xlsx
             if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '': #? If still not found we don't want it.
-                continue
-            
+                continue    
         #? If buyer_name found in fbr.xlsx and buyer_cnic is empty then it takes the cnic from the fbr file.
         to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
         to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
@@ -326,6 +326,7 @@ def program():
     loader = Loader("Saving & Committing everything...", "File generated successfully & FBR database updated as well!", 0.05).start()
     export_sheet.save("Generated_FBR.xlsx")
     loader.stop()
+
 if __name__ == "__main__":
     start = default_timer() #? Starts a timer
     program()
