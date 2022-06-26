@@ -1,6 +1,7 @@
 from timeit import default_timer
 from openpyxl import load_workbook
 from sys import stdout
+import pymysql
 
 class invoicee:
     def __init__(self):
@@ -98,17 +99,31 @@ class invoicee:
 
         self.invoice_date = "".join(self.invoice_date)
         return self.invoice_date
-    def ctrl_f(shop_name : str, shop_cnic : str, fbr_shop_names : list) -> str:
-        for fbr_shops in fbr_shop_names:
-            if fbr_shops[0] == '0' or fbr_shops[0] == '' or fbr_shops[0] is None:
+    def ctrl_f(cur, shop_name : str, shop_cnic : str, fbr_shop_names : list, fbr_shop_cnics : list) -> str:
+        query = "INSERT INTO fbr (Buyer_CNIC, Buyer_Name) VALUES (%s, %s)"
+    
+        for fbr_shop_name, fbr_shop_cnic in zip(fbr_shop_names, fbr_shop_cnics):
+            if fbr_shop_name is None or fbr_shop_cnic is None:
                 continue
-            if shop_name == fbr_shops[1] and shop_cnic == '0' or shop_cnic == 'None':
-                fbr_shops[0] = fbr_shops[0].replace('-', '')
-                shop_cnic = fbr_shops[0]
+            if shop_name == fbr_shop_name and shop_cnic == '0' or shop_cnic == 'None':
+                fbr_shop_cnic = fbr_shop_cnic.replace('-', '')
+                shop_cnic = fbr_shop_cnic
+            elif shop_name not in fbr_shop_names and shop_cnic != '0': #? This is just to update the FBR database with time to time.
+                cur.execute(query, (shop_cnic, shop_name))
+                break
+            #? Import data and update from the database.
             
         return shop_cnic
                 
 def program():
+    # To connect MySQL database
+    conn = pymysql.connect(
+        host='localhost',
+        user='root', 
+        password = "root",
+        db='fbr',
+        )
+    
     animation = ["[■□□□□□□□□□]","[■■□□□□□□□□]", "[■■■□□□□□□□]", "[■■■■□□□□□□]", "[■■■■■□□□□□]", "[■■■■■■□□□□]", "[■■■■■■■□□□]", "[■■■■■■■■□□]", "[■■■■■■■■■□]", "[■■■■■■■■■■]"]
     Invoice_objects = [] #? List of objects
     print("Loading: ")
@@ -119,18 +134,17 @@ def program():
     converted = load_workbook('excel_files/invoice.xlsx') #? Loading converted pdf's invoice.
     invoice_sheet = converted.active 
     
-    #* FBR File
-    fbr = load_workbook('excel_files/fbr.xlsx')
-    fbr_sheet = fbr.active
-        
-    fbr_shop_names = []
-        
-    rows = 2
-    while fbr_sheet[f'D{rows}'].value != None:
-        fbr_shop_names.append([fbr_sheet[f'C{rows}'].value, fbr_sheet[f'D{rows}'].value, rows])
-        rows += 1
-
+    #* FBR DB
+    cur = conn.cursor()
     
+    query = "SELECT Buyer_Name from fbr"
+    cur.execute(query)
+    fbr_shop_names = [item[0] for item in cur.fetchall()]
+    query = "SELECT Buyer_CNIC from fbr"
+    cur.execute(query)
+    fbr_shop_cnics = [item[0] for item in cur.fetchall()]
+        
+
     sheet_divider = 1 #! This is very useful --> There are multiple work sheets in Invoice File so this helps us create a single object from three work sheets.
     
     #? Creating Objects...
@@ -291,7 +305,7 @@ def program():
 
     for i in range(0, len(Invoice_objects)):
         if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
-            Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names) #? Searches for cnic in fbr.xlsx
+            Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(cur, Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names, fbr_shop_cnics) #? Searches for cnic in fbr.xlsx
             if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '': #? If still not found we don't want it.
                 continue
             
@@ -304,7 +318,11 @@ def program():
         to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
 
         rows += 1
+        
     #? Saves it. 
+    conn.commit() #? Updates the fbr file as well
+    conn.close() #! To close the connection
+    
     export_sheet.save("Generated_FBR.xlsx")
     stdout.write("\r" + animation[9 % len(animation)])
     stdout.flush()
