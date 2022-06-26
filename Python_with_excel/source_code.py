@@ -1,8 +1,7 @@
 from timeit import default_timer
 from openpyxl import load_workbook
 from loader import Loader
-from time import sleep
-import pymysql
+.import pymysql
 
 class invoicee:
     def __init__(self):
