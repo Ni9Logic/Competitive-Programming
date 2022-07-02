@@ -113,8 +113,14 @@ class invoicee:
                 break
             #? Import data and update from the database.
             
-        return shop_cnic
-                
+        return shop_cnic          
+
+def checkInt(str):
+    try:
+        int(str)
+        return True
+    except ValueError:
+        return False
 def program():
     loader = Loader("Connecting to FBR database...", "Connected to Fbr database!", 0.05).start()
     # To connect MySQL database
@@ -157,9 +163,7 @@ def program():
         invoice_sheet = converted[f'Table {tables}'] #? To get all the data in invoice_sheet's object from current table.
         cell_value_A1 = invoice_sheet['A1'].value #* This makes it further identifiable on which sheet we are currently.
         
-        if cell_value_A1 == None: #! --> Sales Tax Sheet very easy.
-            invoice.ValueAfterTax = int(invoice_sheet['D6'].value)
-        elif 'Name' in cell_value_A1: #! --> Main Sheet which has name, cnic, date, invoice_number, NTN
+        if 'Name' in cell_value_A1: #! --> Main Sheet which has name, cnic, date, invoice_number, NTN
                 buyer_name = list(invoice_sheet['B1'].value)
                 if '\n' in buyer_name:
                     buyer_name = "".join(buyer_name[buyer_name.index('-') + 1:buyer_name.index('\n')]) #? On new line is address we don't want that and there's a dash as well
@@ -275,18 +279,34 @@ def program():
                 else:
                     NTN = str(invoice_sheet['B2'].value)
                     invoice.NTN = NTN                                   
-        elif 'Product Code' in cell_value_A1: #! --> Quantity's Sheet
-            for product_i in range(2, len(invoice_sheet['B'])): #? This will iterate it through the product names.
-                product_name = invoice_sheet[f'B{product_i}'].value
-                if "X 5" in product_name or "x 5" in product_name or "x5" in product_name or "X5" in product_name:
-                    invoice.total_quantity += invoice_sheet[f'E{product_i}'].value #? if x 5 found, then Add Ctn quantity
-                else: 
-                    invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity                 
+        elif 'Product Code' in cell_value_A1: #! --> Quantity's Sheet & Sales Tax Sheet
+            SalesTax = 0
+            last_sheet_no = len(invoice_sheet['B'])
+            if checkInt(invoice_sheet[f'A{last_sheet_no}'].value) == True:
+                for product_i in range(2, len(invoice_sheet['B']) + 1): #? This will iterate it through the product names.
+                    product_name = invoice_sheet[f'B{product_i}'].value
+                    SalesTax += invoice_sheet[f'K{product_i}'].value
+                    
+                    if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
+                        invoice.total_quantity += invoice_sheet[f'E{product_i}'].value #? if x 5 found, then Add Ctn quantity
+                    else: 
+                        invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity
+            elif checkInt(invoice_sheet[f'A{last_sheet_no}'].value) == False:
+                for product_i in range(2, len(invoice_sheet['B'])): #? This will iterate it through the product names.
+                    product_name = invoice_sheet[f'B{product_i}'].value
+                    SalesTax += invoice_sheet[f'K{product_i}'].value
+                    
+                    if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
+                        invoice.total_quantity += invoice_sheet[f'E{product_i}'].value #? if x 5 found, then Add Ctn quantity
+                    else: 
+                        invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity
+
+            invoice.ValueAfterTax = SalesTax                 
         else: #! --> Sales meme invoice & shop information Sheet --> Useless & Time waste
             continue
         
         #* Important
-        sheet_divider = (sheet_divider % 3) + 1  #? (1 % 3) + 1 = 2, (2 % 3) + 1 = 3, (3 % 3) + 1 = 1 --> We are using '% 3' because we are reading data from three sheets.
+        sheet_divider = (sheet_divider % 2) + 1  #? (1 % 3) + 1 = 2, (2 % 3) + 1 = 3, (3 % 3) + 1 = 1 --> We are using '% 3' because we are reading data from three sheets.
         if sheet_divider == 1: #? (2 != 1), (3 != 1), (1 == 1)
             Invoice_objects.append(invoice)
             invoice = invoicee()
