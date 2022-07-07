@@ -1,8 +1,5 @@
 #include <stdio.h>
 #include <errno.h>
-#include <sys/types.h>
-#include <sys/syscall.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 
 extern int errno;
