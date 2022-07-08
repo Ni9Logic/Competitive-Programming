@@ -11,7 +11,8 @@ class invoicee:
         self.invoice_number = 0
         self.total_quantity = 0
         self.ValueAfterTax = 0
-        self.NTN = 0    
+        self.NTN = ''   
+        
     def correct_buyer_names(self):
             self.buyer_name = self.buyer_name.replace('G/S', 'GENERAL STORE')
             self.buyer_name = self.buyer_name.replace('g/s', ' GENERAL STORE')
@@ -173,6 +174,7 @@ def program():
                 # ? Assigning names from tables by using appropriate incrementing of rows
                 buyer_name = buyer_name.upper()
                 invoice.buyer_name = buyer_name
+                #? This standards the name replaces g/s with general stores etc.
                 invoice.buyer_name = invoice.correct_buyer_names()
                 
                 # ? Assigning CNIC to object
@@ -275,10 +277,12 @@ def program():
                     NTN = str(invoice_sheet['B2'].value)
                     NTN = list(NTN[NTN.index('\n') + 1:])
                     NTN = "".join(NTN)
-                    invoice.NTN = NTN
+                    if len(NTN) == 8 or len(NTN) == 7 or len(NTN) == 9:
+                        invoice.NTN = NTN
                 else:
                     NTN = str(invoice_sheet['B2'].value)
-                    invoice.NTN = NTN                                   
+                    if len(NTN) == 8 or len(NTN) == 7 or len(NTN) == 9:
+                        invoice.NTN = NTN                                   
         elif 'Product Code' in cell_value_A1: #! --> Quantity's Sheet & Sales Tax Sheet
             SalesTax = 0
             last_sheet_no = len(invoice_sheet['B'])
@@ -324,26 +328,36 @@ def program():
     rows = 2
     
     for i in range(0, len(Invoice_objects)):
-        if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
-            Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(cur, Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names, fbr_shop_cnics) #? Searches for cnic in fbr.xlsx
-            if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '': #? If still not found we don't want it.
-                continue    
-        #? If buyer_name found in fbr.xlsx and buyer_cnic is empty then it takes the cnic from the fbr file.
-        to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
-        to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
-        to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
-        to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
-        to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
-        to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
-
+        if len(Invoice_objects[i].NTN) > 1:
+                to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
+                to_export_sheet[f'B{rows}'].value = Invoice_objects[i].NTN #? Col B
+                to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
+                to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
+                to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
+                to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
+        else:
+            if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
+                Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(cur, Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names, fbr_shop_cnics) #? Searches for cnic in fbr.xlsx
+                if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '': #? If still not found we don't want it.
+                    continue    
+            #? If buyer_name found in fbr.xlsx and buyer_cnic is empty then it takes the cnic from the fbr file.
+            to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
+            to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
+            to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
+            to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
+            to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
+            to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
+        
+        
+    
         rows += 1
         
     #? Saves it. 
     loader.stop()
     conn.commit() #? Updates the fbr file as well
     conn.close() #! To close the connection
-    loader = Loader("Saving & Committing everything...", "File generated successfully & FBR database updated as well!", 0.05).start()
     export_sheet.save("Generated_FBR.xlsx")
+    loader = Loader("Saving & Committing everything...", "File generated successfully & FBR database updated as well!", 0.05).start()
     loader.stop()
 
 if __name__ == "__main__":
