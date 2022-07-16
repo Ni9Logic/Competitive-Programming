@@ -334,7 +334,7 @@ def program():
                 to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
                 to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
                 to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
-                to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
+                to_export_sheet[f'O{rows}'].value = int(Invoice_objects[i].ValueAfterTax) #? Col O
         else:
             if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
                 Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(cur, Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names, fbr_shop_cnics) #? Searches for cnic in fbr.xlsx
@@ -346,7 +346,7 @@ def program():
             to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
             to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
             to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
-            to_export_sheet[f'O{rows}'].value = Invoice_objects[i].ValueAfterTax #? Col O
+            to_export_sheet[f'O{rows}'].value = int(Invoice_objects[i].ValueAfterTax) #? Col O
         
         
     
