@@ -4,10 +4,9 @@ import time
 
 time.sleep(5)
 
-text = open('animals.txt', 'r')
-msg = "Ai_sha is a "
+text = open('love.txt', 'r')
 for i in text:
-    print(msg + i)
-    pg.write(msg + i)
+    print(i)
+    pg.write(i)
     pg.press('Enter')
     
