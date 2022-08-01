@@ -3,10 +3,11 @@ import pyautogui as pg
 import time
 
 time.sleep(5)
-text = open('nayyan.txt', 'r')
 
+text = open('animals.txt', 'r')
+msg = "Ai_sha is a "
 for i in text:
-    print(i)
-    pg.write(i)
+    print(msg + i)
+    pg.write(msg + i)
     pg.press('Enter')
     
