@@ -327,8 +327,15 @@ def program():
                 number = list(number[number.index('-') + 1:])
                 number = "".join(number)
                 invoice.invoice_number = number
-       
-        print(invoice.buyer_name, invoice.invoice_date, invoice.invoice_number)
+        
+        #! Continue
+        if invoice_sheet['A1'].value == 'CASH MEMO / SALE INVOICE':
+            print(invoice_sheet['A13'].value, invoice.invoice_number)
+            #? Logic now onwards calculations from cell A14 until 'None' or until 'Total no. of items'
+        else:
+            print(invoice_sheet['A11'].value, invoice.invoice_number)
+            #? Logic now onwards calculations from cell A12 until 'None' or until 'Total no. of items'
+            
         Invoice_objects.append(invoice)
         invoice = invoicee()
         #     #? Assigning NTN
@@ -365,14 +372,6 @@ def program():
         #                     invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity
 
         #         invoice.ValueAfterTax = SalesTax                 
-        #     else: #! --> Sales meme invoice & shop information Sheet --> Useless & Time waste
-        #         continue
-            
-        #     #* Important
-        #     sheet_divider = (sheet_divider % 2) + 1  #? (1 % 3) + 1 = 2, (2 % 3) + 1 = 3, (3 % 3) + 1 = 1 --> We are using '% 3' because we are reading data from three sheets.
-        #     if sheet_divider == 1: #? (2 != 1), (3 != 1), (1 == 1)
-        #         Invoice_objects.append(invoice)
-        #         invoice = invoicee()
     
     
     # #? Exporting the object's values into the excel file...
