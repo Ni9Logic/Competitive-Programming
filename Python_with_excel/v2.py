@@ -186,8 +186,8 @@ def program():
             invoice.buyer_name = invoice.correct_buyer_names()
             
         # ? Assigning CNIC to object
-        if invoice_sheet['L4'].value is None:
-            buyer_cnic = str(invoice_sheet['K4'].value)
+        if cell_value_A1 == "CASH MEMO / SALE INVOICE":
+            buyer_cnic = str(invoice_sheet['C6'].value)
             if '_' in buyer_cnic: #? Some had underscores we remove them.
                 buyer_cnic = buyer_cnic.replace('_', '')
             elif '-' in buyer_cnic:
@@ -197,7 +197,8 @@ def program():
                 
             invoice.buyer_cnic = buyer_cnic
         else:
-            buyer_cnic = str(invoice_sheet['L4'].value)
+            buyer_cnic = str(invoice_sheet['C4'].value)
+            
             if '_' in buyer_cnic: #? Some had underscores we remove them.
                 buyer_cnic = buyer_cnic.replace('_', '')
             elif '-' in buyer_cnic:
@@ -206,6 +207,7 @@ def program():
                 buyer_cnic == '0'
                 
             invoice.buyer_cnic = buyer_cnic
+        
                  
         # ? Assigning Dates to object
         if "Date" in str(invoice_sheet['R3'].value):
@@ -328,34 +330,77 @@ def program():
                 number = "".join(number)
                 invoice.invoice_number = number
         
-        #! Continue
-        if invoice_sheet['A1'].value == 'CASH MEMO / SALE INVOICE':
-            print(invoice_sheet['A13'].value, invoice.invoice_number)
-            #? Logic now onwards calculations from cell A14 until 'None' or until 'Total no. of items'
+        #? Assigning NTN
+        if '\n' in str(invoice_sheet['C2'].value):
+            NTN = str(invoice_sheet['C2'].value)
+            NTN = list(NTN[NTN.index('\n') + 1:])
+            NTN = "".join(NTN)
+            if len(NTN) == 8 or len(NTN) == 7 or len(NTN) == 9:
+                invoice.NTN = NTN
         else:
-            print(invoice_sheet['A11'].value, invoice.invoice_number)
-            #? Logic now onwards calculations from cell A12 until 'None' or until 'Total no. of items'
+            NTN = str(invoice_sheet['C2'].value)
+            if len(NTN) == 8 or len(NTN) == 7 or len(NTN) == 9:
+                invoice.NTN = NTN    
+                
+        #? Calculating TotalQuantity and SalesTax        
+        if invoice_sheet['A1'].value == 'CASH MEMO / SALE INVOICE':
+            start = 14
+            SalesTax = 0
+            while invoice_sheet[f'A{start}'].value is not None and checkInt(invoice_sheet[f'A{start}'].value) == True:
+                Tax = invoice_sheet[f'P{start}'].value
+                SalesTax += Tax
+                product_name = invoice_sheet[f'B{start}'].value
+                if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
+                    invoice.total_quantity += invoice_sheet[f'G{start}'].value #? if x 5 found, then Add Ctn quantity
+                else: 
+                    invoice.total_quantity += invoice_sheet[f'I{start}'].value #? Add pcs quantity
             
+                start += 1
+                
+            invoice.ValueAfterTax = SalesTax
+        else:
+            if invoice_sheet['P11'].value == "Further Tax" and invoice_sheet['P11'].value is not None: #? Values get shifted to right side for no reason
+                start = 12
+                SalesTax = 0
+                while invoice_sheet[f'A{start}'].value is not None and checkInt(invoice_sheet[f'A{start}'].value) == True:
+                    Tax = invoice_sheet[f'N{start}'].value
+                    SalesTax += Tax
+                    product_name = invoice_sheet[f'B{start}'].value
+                    if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
+                        invoice.total_quantity += invoice_sheet[f'F{start}'].value #? if x 5 found, then Add Ctn quantity
+                    else: 
+                        invoice.total_quantity += invoice_sheet[f'H{start}'].value #? Add pcs quantity
+                    
+                    start += 1
+            else:
+                start = 12
+                SalesTax = 0
+                while invoice_sheet[f'A{start}'].value is not None and checkInt(invoice_sheet[f'A{start}'].value) == True:
+                    Tax = invoice_sheet[f'P{start}'].value
+                    SalesTax += Tax
+                    product_name = invoice_sheet[f'B{start}'].value
+                    if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
+                        invoice.total_quantity += invoice_sheet[f'G{start}'].value #? if x 5 found, then Add Ctn quantity
+                    else: 
+                        invoice.total_quantity += invoice_sheet[f'I{start}'].value #? Add pcs quantity
+                    
+                    start += 1
+                
+            invoice.ValueAfterTax = SalesTax
+            
+                
+        
+            #? Logic now onwards calculations from cell A14 until 'None' or until 'Total no. of items'
         Invoice_objects.append(invoice)
         invoice = invoicee()
-        #     #? Assigning NTN
-        #     if '\n' in str(invoice_sheet['B2'].value):
-        #         NTN = str(invoice_sheet['B2'].value)
-        #         NTN = list(NTN[NTN.index('\n') + 1:])
-        #         NTN = "".join(NTN)
-        #         if len(NTN) == 8 or len(NTN) == 7 or len(NTN) == 9:
-        #             invoice.NTN = NTN
-        #     else:
-        #                 NTN = str(invoice_sheet['B2'].value)
-        #                 if len(NTN) == 8 or len(NTN) == 7 or len(NTN) == 9:
-        #                     invoice.NTN = NTN                                   
+                                       
         #     if 'Product Code' in cell_value_A1: #! --> Quantity's Sheet & Sales Tax Sheet
         #         SalesTax = 0
         #         last_sheet_no = len(invoice_sheet['B'])
         #         if checkInt(invoice_sheet[f'A{last_sheet_no}'].value) == True:
         #             for product_i in range(2, len(invoice_sheet['B']) + 1): #? This will iterate it through the product names.
         #                 product_name = invoice_sheet[f'B{product_i}'].value
-        #                 SalesTax += invoice_sheet[f'K{product_i}'].value
+        #                 SalesTax += invoice_sheet[f'Kpa{product_i}'].value
                         
         #                 if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
         #                     invoice.total_quantity += invoice_sheet[f'E{product_i}'].value #? if x 5 found, then Add Ctn quantity
@@ -374,42 +419,42 @@ def program():
         #         invoice.ValueAfterTax = SalesTax                 
     
     
-    # #? Exporting the object's values into the excel file...
-    # # * File to export
-    # export_sheet = load_workbook('excel_files/sample.xlsx') #? File to Save later on
-    # to_export_sheet = export_sheet.active
+    #? Exporting the object's values into the excel file...
+    # * File to export
+    export_sheet = load_workbook('excel_files/sample.xlsx') #? File to Save later on
+    to_export_sheet = export_sheet.active
     
-    # rows = 2
+    rows = 2
     
-    # for i in range(0, len(Invoice_objects)):
-    #     if len(Invoice_objects[i].NTN) > 1:
-    #             to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
-    #             to_export_sheet[f'B{rows}'].value = Invoice_objects[i].NTN #? Col B
-    #             to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
-    #             to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
-    #             to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
-    #             to_export_sheet[f'O{rows}'].value = int(Invoice_objects[i].ValueAfterTax) #? Col O
-    #     else:
-    #         if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
-    #             Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(cur, Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names, fbr_shop_cnics) #? Searches for cnic in fbr.xlsx
-    #             if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '': #? If still not found we don't want it.
-    #                 continue    
-    #         #? If buyer_name found in fbr.xlsx and buyer_cnic is empty then it takes the cnic from the fbr file.
-    #         to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
-    #         to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
-    #         to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
-    #         to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
-    #         to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
-    #         to_export_sheet[f'O{rows}'].value = int(Invoice_objects[i].ValueAfterTax) #? Col O
+    for i in range(0, len(Invoice_objects)):
+        if len(Invoice_objects[i].NTN) > 1:
+                to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
+                to_export_sheet[f'B{rows}'].value = Invoice_objects[i].NTN #? Col B
+                to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
+                to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
+                to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
+                to_export_sheet[f'O{rows}'].value = int(Invoice_objects[i].ValueAfterTax) #? Col O
+        else:
+            if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None': #? If buyer cnic is empty it will search for it in the fbr.xlsx
+                Invoice_objects[i].buyer_cnic = invoicee.ctrl_f(cur, Invoice_objects[i].buyer_name, Invoice_objects[i].buyer_cnic, fbr_shop_names, fbr_shop_cnics) #? Searches for cnic in fbr.xlsx
+                if Invoice_objects[i].buyer_cnic == '0' or Invoice_objects[i].buyer_cnic == 'None' or Invoice_objects[i].buyer_cnic == '': #? If still not found we don't want it.
+                    continue    
+            #? If buyer_name found in fbr.xlsx and buyer_cnic is empty then it takes the cnic from the fbr file.
+            to_export_sheet[f'D{rows}'].value = Invoice_objects[i].buyer_name #? Col D
+            to_export_sheet[f'C{rows}'].value = Invoice_objects[i].buyer_cnic #? Col C
+            to_export_sheet[f'H{rows}'].value = int(Invoice_objects[i].invoice_number) #? Col H
+            to_export_sheet[f'I{rows}'].value = Invoice_objects[i].invoice_date #? Col I
+            to_export_sheet[f'M{rows}'].value = Invoice_objects[i].total_quantity #? Col M
+            to_export_sheet[f'O{rows}'].value = int(Invoice_objects[i].ValueAfterTax) #? Col O
         
         
     
-    #     rows += 1
+        rows += 1
         
-    # #? Saves it. 
-    # conn.commit() #? Updates the fbr file as well
-    # conn.close() #! To close the connection
-    # export_sheet.save("Generated_FBR.xlsx")
+    #? Saves it. 
+    conn.commit() #? Updates the fbr file as well
+    conn.close() #! To close the connection
+    export_sheet.save("Generated_FBR.xlsx")
 
 if __name__ == "__main__":
     start = default_timer() #? Starts a timer
