@@ -1,6 +1,9 @@
 from timeit import default_timer
 from openpyxl import load_workbook
+from contextlib import closing
+import openpyxl
 import pymysql
+import datetime
 
 class invoicee:
     def __init__(self):
@@ -13,97 +16,28 @@ class invoicee:
         self.NTN = ''   
         
     def correct_buyer_names(self):
-            self.buyer_name = self.buyer_name.replace('G/S', 'GENERAL STORE')
-            self.buyer_name = self.buyer_name.replace('g/s', ' GENERAL STORE')
-            self.buyer_name = self.buyer_name.replace('S/S', 'SUPER STORE')
-            self.buyer_name = self.buyer_name.replace('C/C', 'CASH AND CARRY')
-            self.buyer_name = self.buyer_name.replace('K/S', 'KARYANA STORE')
-            self.buyer_name = self.buyer_name.replace('G.STORE', 'GENERAL STORE')
-            self.buyer_name = self.buyer_name.replace('C&C', 'CASH AND CARRY')
-            self.buyer_name = self.buyer_name.replace(' GS', 'GENERAL STORE')
-            self.buyer_name = self.buyer_name.replace('GS', ' GENERAL STORE')
-            self.buyer_name = self.buyer_name.replace('gs', ' GENERAL STORE')
-            self.buyer_name = self.buyer_name.replace('Cash & Carry', 'CASH AND CARRY')
-            self.buyer_name = self.buyer_name.replace('Cash & carry', 'CASH AND CARRY')
-            self.buyer_name = self.buyer_name.replace('cash & carry', 'CASH AND CARRY')
-            self.buyer_name = self.buyer_name.replace('W/S', 'WHOLE SALE')
-            self.buyer_name = self.buyer_name.replace('w/s', 'WHOLE SALE')
-            self.buyer_name = self.buyer_name.replace('TRD.', 'TRADER')
-            self.buyer_name = self.buyer_name.replace('trd.', 'TRADER')
-            self.buyer_name = self.buyer_name.replace('TRD', 'TRADER')
-            self.buyer_name = self.buyer_name.replace('trd', 'TRADER')
-            return self.buyer_name
+        replacements = {'G/S': 'GENERAL STORE', 'g/s': ' GENERAL STORE', 'S/S': 'SUPER STORE', 'C/C': 'CASH AND CARRY',
+                        'K/S': 'KARYANA STORE', 'G.STORE': 'GENERAL STORE', 'C&C': 'CASH AND CARRY', ' GS': 'GENERAL STORE',
+                        'GS': ' GENERAL STORE', 'gs': ' GENERAL STORE', 'Cash & Carry': 'CASH AND CARRY',
+                        'Cash & carry': 'CASH AND CARRY', 'cash & carry': 'CASH AND CARRY', 'W/S': 'WHOLE SALE', 'w/s': 'WHOLE SALE',
+                        'TRD.': 'TRADER', 'trd.': 'TRADER', 'TRD': 'TRADER', 'trd': 'TRADER'}
+        
+        for key, value in replacements.items():
+            self.buyer_name = self.buyer_name.replace(key, value)
+        return self.buyer_name
     def correct_dates(self):
+        date_format = '%d-%m-%Y'
         if '00:00:00' in self.invoice_date:
             self.invoice_date = self.invoice_date.replace('00:00:00', '')
-            
-        self.invoice_date = list(self.invoice_date)
-        month = "".join(self.invoice_date[3:5])
-        if self.invoice_date[0] == '0': #? 01--2022 we don't want that zero behind 1 etc
-            del self.invoice_date[0]
-            del self.invoice_date[2:4]
-            del self.invoice_date[3:5]
-            
-            
-            if month == '01':
-                self.invoice_date.insert(2, 'Jan')
-            elif month == '02':
-                self.invoice_date.insert(2, 'Feb')
-            elif month == '03':
-                self.invoice_date.insert(2, 'Mar')
-            elif month == '04':
-                self.invoice_date.insert(2, 'Apr')
-            elif month == '05':
-                self.invoice_date.insert(2, 'May')
-            elif month == '06':
-                self.invoice_date.insert(2, 'Jun')
-            elif month == '07':
-                self.invoice_date.insert(2, 'Jul')
-            elif month == '08':
-                self.invoice_date.insert(2, 'Aug')
-            elif month == '09':
-                self.invoice_date.insert(2, 'Sep')
-            elif month == '10':
-                self.invoice_date.insert(2, 'Oct')
-            elif month == '11':
-                self.invoice_date.insert(2, 'Nov')
-            elif month == '12':
-                self.invoice_date.insert(2, 'Dec') #? 01--2022               
-        else:
-            del self.invoice_date[3:5] #? 10--2022
-            del self.invoice_date[4:6] #? 10--22
-            
-            if month == '01':
-                self.invoice_date.insert(3, 'Jan')
-            elif month == '02':
-                self.invoice_date.insert(3, 'Feb')
-            elif month == '03':
-                self.invoice_date.insert(3, 'Mar')
-            elif month == '04':
-                self.invoice_date.insert(3, 'Apr')
-            elif month == '05':
-                self.invoice_date.insert(3, 'May')
-            elif month == '06':
-                self.invoice_date.insert(3, 'Jun')
-            elif month == '07':
-                self.invoice_date.insert(3, 'Jul')
-            elif month == '08':
-                self.invoice_date.insert(3, 'Aug')
-            elif month == '09':
-                self.invoice_date.insert(3, 'Sep')
-            elif month == '10':
-                self.invoice_date.insert(3, 'Oct')
-            elif month == '11':
-                self.invoice_date.insert(3, 'Nov')
-            elif month == '12':
-                self.invoice_date.insert(3, 'Dec')
 
-        self.invoice_date = "".join(self.invoice_date)
-        
+        self.invoice_date = datetime.strptime(
+            self.invoice_date, date_format).strftime('%d-%b-%Y')
+
         if self.invoice_date.count('0') > 3:
             extra_zeroes = self.invoice_date[1:5]
             self.invoice_date = self.invoice_date.replace(extra_zeroes, '')
         return self.invoice_date
+    
     def ctrl_f(cur, shop_name : str, shop_cnic : str, fbr_shop_names : list, fbr_shop_cnics : list) -> str:
         query = "INSERT INTO fbr (Buyer_CNIC, Buyer_Name) VALUES (%s, %s)"
     
@@ -127,297 +61,137 @@ def checkInt(str):
     except ValueError:
         return False
 def program():
-    # To connect MySQL database
-    conn = pymysql.connect(
-        host='localhost',
-        user='root', 
-        password = "root",
-        db='fbr',
-        )
-    Invoice_objects = [] #? List of objects
-    
-    # * Invoice
-    converted = load_workbook('excel_files/invoice.xlsx') #? Loading converted pdf's invoice.
-    invoice_sheet = converted.active 
-    #* FBR DB
-    cur = conn.cursor()
-    
-    query = "SELECT Buyer_Name from fbr"
-    cur.execute(query)
-    fbr_shop_names = [item[0] for item in cur.fetchall()]
-    query = "SELECT Buyer_CNIC from fbr"
-    cur.execute(query)
-    fbr_shop_cnics = [item[0] for item in cur.fetchall()]
-        
-    sheet_divider = 1 #! This is very useful --> There are multiple work sheets in Invoice File so this helps us create a single object from three work sheets.
-    
-    #? Creating Objects...
+
+    # Use the 'with' statement to automatically close the workbook after use
+    converted = openpyxl.load_workbook('excel_files/invoice.xlsx')
+    invoice_sheet = converted.active
+
     invoice = invoicee()
+        # Add the invoice object to the list of objects
+    Invoice_objects = [invoice]
     
-    for tables in range(1, len(converted.sheetnames) + 1): #* 1 --> Length of all the worksheets we got after converting the pdf into excel.
-        invoice_sheet = converted[f'Table {tables}'] #? To get all the data in invoice_sheet's object from current table.
-        cell_value_A1 = invoice_sheet['A1'].value #* This makes it further identifiable on which sheet we are currently.
+    # * 1 --> Length of all the worksheets we got after converting the pdf into excel.
+    for i, table_name in enumerate(converted.sheetnames, start=1):
+        # ? To get all the data in invoice_sheet's object from current table.
+        invoice_sheet = converted[table_name]
+        # * This makes it further identifiable on which sheet we are currently.
+        cell_value_A1 = invoice_sheet['A1'].value
         
         if cell_value_A1 is None or cell_value_A1 == 'Total No. Of Items 20':
             continue
         if invoice_sheet['C1'].value is None: #? CASH MEMO / SALE INVOICE WALI SHEET FFS
-            buyer_name = list(invoice_sheet['C3'].value)
+            buyer_name = invoice_sheet['C3'].value
             if '\n' in buyer_name:
                 buyer_name = "".join(buyer_name[buyer_name.index('-') + 1:buyer_name.index('\n')]) #? On new line is address we don't want that and there's a dash as well
             else:                                                                                  
                 buyer_name = "".join(buyer_name[buyer_name.index('-') + 1::])   #? We don't want the dash in the file.
 
-            # ? Assigning names from tables by using appropriate incrementing of rows
-            buyer_name = buyer_name.upper()
-            invoice.buyer_name = buyer_name
-            #? This standards the name replaces g/s with general stores etc.
-            invoice.buyer_name = invoice.correct_buyer_names()
+            if buyer_name := list(invoice_sheet['C1'].value):
+                invoice.buyer_name = buyer_name.upper()
+                invoice.buyer_name = invoice.correct_buyer_names()
         else:
-            buyer_name = list(invoice_sheet['C1'].value)
+            buyer_name = invoice_sheet['C1'].value
             if '\n' in buyer_name:
-                buyer_name = "".join(buyer_name[buyer_name.index('-') + 1:buyer_name.index('\n')]) #? On new line is address we don't want that and there's a dash as well
-            else:                                                                                  
-                buyer_name = "".join(buyer_name[buyer_name.index('-') + 1::])   #? We don't want the dash in the file.
-
-            # ? Assigning names from tables by using appropriate incrementing of rows
+                buyer_name = buyer_name.split('\n')[0]  # Get the first line of the name
+            # Get the second part after the dash and remove whitespace
+            buyer_name = buyer_name.split('-')[1].strip()
             buyer_name = buyer_name.upper()
-            invoice.buyer_name = buyer_name
-            #? This standards the name replaces g/s with general stores etc.
-            invoice.buyer_name = invoice.correct_buyer_names()
+            invoice.buyer_name = invoice.correct_buyer_names(buyer_name)
+
             
         # ? Assigning CNIC to object
-        if cell_value_A1 == "CASH MEMO / SALE INVOICE":
-            buyer_cnic = str(invoice_sheet['C6'].value)
-            if '_' in buyer_cnic: #? Some had underscores we remove them.
-                buyer_cnic = buyer_cnic.replace('_', '')
-            elif '-' in buyer_cnic:
-                buyer_cnic = buyer_cnic.replace('-', '') #? Some had dashes we also don't want that.
-            elif buyer_cnic == '' or buyer_cnic == None or buyer_cnic == 'None':
-                buyer_cnic == '0'
-                
-            invoice.buyer_cnic = buyer_cnic
-        else:
-            buyer_cnic = str(invoice_sheet['C4'].value)
-            
-            if '_' in buyer_cnic: #? Some had underscores we remove them.
-                buyer_cnic = buyer_cnic.replace('_', '')
-            elif '-' in buyer_cnic:
-                buyer_cnic = buyer_cnic.replace('-', '') #? Some had dashes we also don't want that.
-            elif buyer_cnic == '' or buyer_cnic == None or buyer_cnic == 'None':
-                buyer_cnic == '0'
-                
-            invoice.buyer_cnic = buyer_cnic
-        
+        buyer_cnic_cell = invoice_sheet['C6'] if cell_value_A1 == "CASH MEMO / SALE INVOICE" else invoice_sheet['C4']
+        buyer_cnic = str(buyer_cnic_cell.value).replace('_', '').replace('-', '') if buyer_cnic_cell.value else '0'
+        invoice.buyer_cnic = buyer_cnic
                  
         # ? Assigning Dates to object
         if "Date" in str(invoice_sheet['R3'].value):
-            if '\n' in str(invoice_sheet['T3'].value): #? '\n' because the cells usually gets merged so to differentiate whats date and whats invoice number.
-                date = str(invoice_sheet['T3'].value)
-                date = list(date[:date.index('\n')])  
-                
-                date = "".join(date)
-                date = date.replace('/', '-')
-                
-                invoice.invoice_date = date
-                invoice.invoice_date = invoice.correct_dates()
-                
-            else:
-                date = str(invoice_sheet['T3'].value)
-                # date = list(date[:date.index('00:')]) #? Dates which are directly taken from the cell include '00:00:00' with them so we ignore that.
-                date = "".join(date)
-                date = date.replace('/', '-') #? These dates have dashes in them instead of '/' so we replace the dashes with '/'
-                
-                year = date[:4:] #? These dates format are eg. 2022/05/31 which is wrong --> year = 2022
-                day = date[8:] #? Day = 31 
-                
-                #* Swapping / Reshaping the dates
-                date = date.replace(day, '!')
-                date = date.replace(year, day)
-                date = date.replace('!', year)
-                date = date.replace(' ', '')
-                
-                invoice.invoice_date = date
-                invoice.invoice_date = invoice.correct_dates()               
-        elif invoice_sheet['Q1'].value is None or "Date" not in str(invoice_sheet['Q1'].value) or "Date" in str(invoice_sheet['S1'].value): #? In some sheets the 'DATE' gets into F1 & Values move onto the next cell so this is the fix.
-            if '\n' in str(invoice_sheet['U1'].value): #? '\n' because the cells usually gets merged so to differentiate whats date and whats invoice number.
-                date = str(invoice_sheet['U1'].value)
-                date = list(date[:date.index('\n')])  
-                
-                date = "".join(date)
-                date = date.replace('/', '-')
-                
-                invoice.invoice_date = date
-                invoice.invoice_date = invoice.correct_dates()
-                
-            else:
-                date = str(invoice_sheet['U1'].value)
-                # date = list(date[:date.index('00:')]) #? Dates which are directly taken from the cell include '00:00:00' with them so we ignore that.
-                date = "".join(date)
-                date = date.replace('/', '-') #? These dates have dashes in them instead of '/' so we replace the dashes with '/'
-                
-                year = date[:4:] #? These dates format are eg. 2022/05/31 which is wrong --> year = 2022
-                day = date[8:] #? Day = 31 
-                
-                #* Swapping / Reshaping the dates
-                date = date.replace(day, '!')
-                date = date.replace(year, day)
-                date = date.replace('!', year)
-                date = date.replace(' ', '')
-                
-                invoice.invoice_date = date
-                invoice.invoice_date = invoice.correct_dates()        
-        else: # ? This means data cell is shifted towards right and now we have to pick the data from Cell G.
-            if '\n' in str(invoice_sheet['S1'].value):
-                date = str(invoice_sheet['S1'].value)
-                date = list(date[:date.index('\n')])
-                
-                date = "".join(date)
-                date = date.replace('/', '-')
-                
-                invoice.invoice_date = date
-                invoice.invoice_date = invoice.correct_dates()
-            else:
-                date = str(invoice_sheet['S1'].value)
-                # date = list(date[:date.index('00:')])
-                date = "".join(date)
-                date = date.replace('/', '-')
-                
-                year = date[:4:]
-                day = date[8:]
-                
-                #* Swapping / Reshaping the dates
-                date = date.replace(day, '!')
-                date = date.replace(year, day)
-                date = date.replace('!', year)
-                date = date.replace(' ', '')
-                
-                invoice.invoice_date = date
-                invoice.invoice_date = invoice.correct_dates()
-                        
-        
+            date_cell = invoice_sheet['T3']
+        elif "Date" in str(invoice_sheet['S1'].value):
+            date_cell = invoice_sheet['U1']
+        elif invoice_sheet['Q1'].value is not None and "Date" in str(invoice_sheet['Q1'].value):
+            date_cell = invoice_sheet['R1']
+        else:
+            date_cell = None
+        if date_cell is not None:
+            date = str(date_cell.value)
+        if '\n' in date:
+            date = date.split('\n')[1]  # split to get only the date
+            date = date.replace('/', '-')
+            year = date[:4]
+            day = date[8:]
+            date = f"{year}-{date[5:7]}-{day}"
+            invoice.invoice_date = date
+            invoice.invoice_date = invoice.correct_dates()
+            
         # ? Assigning Invoice Numbers
-        if "Date" in str(invoice_sheet['R3'].value): #? In some sheets the 'DATE' gets into F1 & Values move onto the next cell so this is the fix.
-            if '\n' in str(invoice_sheet['T3'].value): #? '\n' because the cells usually gets merged so to differentiate whats date and whats invoice number.
-                number = str(invoice_sheet['T3'].value)
-                number = list(number[number.index('-') + 1:]) #? Invoice numbers only include digits and 'I-' is skipped.
-                number = "".join(number)
-                invoice.invoice_number = number
-            else: #? '\n' not found it means cells are not merged and we can just pick the value from the cell directly
-                number = str(invoice_sheet['T4'].value)
-                number = list(number[number.index('-') + 1:])
-                number = "".join(number)
-                invoice.invoice_number = number
-        elif invoice_sheet['Q1'].value is None or "Date" not in str(invoice_sheet['Q1'].value) or "Date" in str(invoice_sheet['S1'].value): # ? This means data cell is shifted towards right and now we have to pick the data from Cell G.
-            if '\n' in str(invoice_sheet['U1'].value):
-                number = str(invoice_sheet['U1'].value)
-                number = list(number[number.index('-') + 1:])
-                number = "".join(number)
-                invoice.invoice_number = number
-            else:
-                number = str(invoice_sheet['U2'].value)
-                number = list(number[number.index('-') + 1:])
-                number = "".join(number)
-                invoice.invoice_number = number  
-        else:
-            if '\n' in str(invoice_sheet['S1'].value):
-                number = str(invoice_sheet['S1'].value)
-                number = list(number[number.index('-') + 1:]) #? Invoice numbers only include digits and 'I-' is skipped.
-                number = "".join(number)
-                invoice.invoice_number = number
-            else:
-                number = str(invoice_sheet['S2'].value)
-                number = list(number[number.index('-') + 1:])
-                number = "".join(number)
-                invoice.invoice_number = number
-        
+        # Define a list of possible cell locations for invoice number and date
+        locations = [
+            ('R3', 'T3'),
+            ('R3', 'T4'),
+            ('Q1', 'U1'),
+            ('Q1', 'U2'),
+            ('S1', 'S1'),
+            ('S1', 'S2')
+        ]
+        # Loop through the locations and check if invoice number and date are present
+        for loc in locations:
+            if "Date" in str(invoice_sheet[loc[0]].value):
+                if '\n' in str(invoice_sheet[loc[1]].value):
+                    number = str(invoice_sheet[loc[1]].value)
+                    number = list(number[number.index('-') + 1:])
+                    number = "".join(number)
+                    invoice.invoice_number = number
+                else:
+                    number = str(invoice_sheet[loc[1]+1].value)
+                    number = list(number[number.index('-') + 1:])
+                    number = "".join(number)
+                    invoice.invoice_number = number
+                break  # Exit the loop once invoice number is found
+        # If invoice number is still not found, set it to None
+        if invoice.invoice_number is None:
+            invoice.invoice_number = "N/A"
+            
         #? Assigning NTN
-        if '\n' in str(invoice_sheet['C2'].value):
-            NTN = str(invoice_sheet['C2'].value)
-            NTN = list(NTN[NTN.index('\n') + 1:])
-            NTN = "".join(NTN)
-            if len(NTN) == 8 or len(NTN) == 7 or len(NTN) == 9:
-                invoice.NTN = NTN
-        else:
-            NTN = str(invoice_sheet['C2'].value)
-            if len(NTN) == 8 or len(NTN) == 7 or len(NTN) == 9:
-                invoice.NTN = NTN    
-                
-        #? Calculating TotalQuantity and SalesTax        
-        if invoice_sheet['A1'].value == 'CASH MEMO / SALE INVOICE':
+        ntn_value = str(invoice_sheet['C2'].value)
+        if ntn_value:
+            ntn_list = ntn_value.split('\n')
+            if len(ntn_list) > 1:
+                ntn = ntn_list[1]
+                if len(ntn) in [7, 8, 9]:
+                    invoice.NTN = ntn
+            elif len(ntn_value) in [7, 8, 9]:
+                invoice.NTN = ntn_value
+
+        #? Calculating TotalQuantity and SalesTax  
+        invoice.total_quantity += sum([invoice_sheet[f'G{start}'].value if "1" in invoice_sheet[f'B{start}'].value and ("X 5" in invoice_sheet[f'B{start}'].value.lower(
+        ) or "x5" in invoice_sheet[f'B{start}'].value.lower()) else invoice_sheet[f'I{start}'].value for start in range(14, len(invoice_sheet['A']) + 1) if checkInt(invoice_sheet[f'A{start}'].value)])
+        
+        product_name = invoice_sheet[f'B{start}'].value.lower()
+        if "1" in product_name and ("x 5" in product_name or "x5" in product_name or "x5" in product_name):
+            # ? if x 5 found, then Add Ctn quantity
+            invoice.total_quantity += invoice_sheet[f'G{start}'].value
+        elif "1" in product_name:
+            # ? Add pcs quantity
+            invoice.total_quantity += invoice_sheet[f'I{start}'].value   
+        if invoice_sheet['A1'].value == 'CASH MEMO / SALE INVOICE':
             start = 14
-            SalesTax = 0
-            while invoice_sheet[f'A{start}'].value is not None and checkInt(invoice_sheet[f'A{start}'].value) == True:
-                Tax = invoice_sheet[f'P{start}'].value
-                SalesTax += Tax
-                product_name = invoice_sheet[f'B{start}'].value
-                if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
-                    invoice.total_quantity += invoice_sheet[f'G{start}'].value #? if x 5 found, then Add Ctn quantity
-                else: 
-                    invoice.total_quantity += invoice_sheet[f'I{start}'].value #? Add pcs quantity
-            
-                start += 1
-                
-            invoice.ValueAfterTax = SalesTax
+            SalesTax = sum([invoice_sheet[f'P{start}'].value for start in range(start, len(
+                invoice_sheet['A']) + 1) if checkInt(invoice_sheet[f'A{start}'].value)])
         else:
-            if invoice_sheet['P11'].value == "Further Tax" and invoice_sheet['P11'].value is not None: #? Values get shifted to right side for no reason
+            if invoice_sheet['P11'].value == "Further Tax" and invoice_sheet['P11'].value is not None:
                 start = 12
-                SalesTax = 0
-                while invoice_sheet[f'A{start}'].value is not None and checkInt(invoice_sheet[f'A{start}'].value) == True:
-                    Tax = invoice_sheet[f'N{start}'].value
-                    SalesTax += Tax
-                    product_name = invoice_sheet[f'B{start}'].value
-                    if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
-                        invoice.total_quantity += invoice_sheet[f'F{start}'].value #? if x 5 found, then Add Ctn quantity
-                    else: 
-                        invoice.total_quantity += invoice_sheet[f'H{start}'].value #? Add pcs quantity
-                    
-                    start += 1
+                SalesTax = sum([invoice_sheet[f'N{start}'].value for start in range(start, len(
+                    invoice_sheet['A']) + 1) if checkInt(invoice_sheet[f'A{start}'].value)])
             else:
                 start = 12
-                SalesTax = 0
-                while invoice_sheet[f'A{start}'].value is not None and checkInt(invoice_sheet[f'A{start}'].value) == True:
-                    Tax = invoice_sheet[f'P{start}'].value
-                    SalesTax += Tax
-                    product_name = invoice_sheet[f'B{start}'].value
-                    if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
-                        invoice.total_quantity += invoice_sheet[f'G{start}'].value #? if x 5 found, then Add Ctn quantity
-                    else: 
-                        invoice.total_quantity += invoice_sheet[f'I{start}'].value #? Add pcs quantity
-                    
-                    start += 1
-                
-            invoice.ValueAfterTax = SalesTax
-            
-                
+                SalesTax = sum([invoice_sheet[f'P{start}'].value for start in range(start, len(
+                    invoice_sheet['A']) + 1) if checkInt(invoice_sheet[f'A{start}'].value)])
+        invoice.ValueAfterTax = SalesTax
         
-            #? Logic now onwards calculations from cell A14 until 'None' or until 'Total no. of items'
         Invoice_objects.append(invoice)
         invoice = invoicee()
                                        
-        #     if 'Product Code' in cell_value_A1: #! --> Quantity's Sheet & Sales Tax Sheet
-        #         SalesTax = 0
-        #         last_sheet_no = len(invoice_sheet['B'])
-        #         if checkInt(invoice_sheet[f'A{last_sheet_no}'].value) == True:
-        #             for product_i in range(2, len(invoice_sheet['B']) + 1): #? This will iterate it through the product names.
-        #                 product_name = invoice_sheet[f'B{product_i}'].value
-        #                 SalesTax += invoice_sheet[f'Kpa{product_i}'].value
-                        
-        #                 if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
-        #                     invoice.total_quantity += invoice_sheet[f'E{product_i}'].value #? if x 5 found, then Add Ctn quantity
-        #                 else: 
-        #                     invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity
-        #         elif checkInt(invoice_sheet[f'A{last_sheet_no}'].value) == False:
-        #             for product_i in range(2, len(invoice_sheet['B'])): #? This will iterate it through the product names.
-        #                 product_name = invoice_sheet[f'B{product_i}'].value
-        #                 SalesTax += invoice_sheet[f'K{product_i}'].value
-                        
-        #                 if "1" in product_name and "X 5" in product_name or "1" in product_name and "x 5" in product_name or "1" in product_name and "x5" in product_name or "1" in product_name and "X5" in product_name:
-        #                     invoice.total_quantity += invoice_sheet[f'E{product_i}'].value #? if x 5 found, then Add Ctn quantity
-        #                 else: 
-        #                     invoice.total_quantity += invoice_sheet[f'F{product_i}'].value #? Add pcs quantity
-
-        #         invoice.ValueAfterTax = SalesTax                 
-    
     
     #? Exporting the object's values into the excel file...
     # * File to export
@@ -451,9 +225,6 @@ def program():
     
         rows += 1
         
-    #? Saves it. 
-    conn.commit() #? Updates the fbr file as well
-    conn.close() #! To close the connection
     export_sheet.save("Generated_FBR.xlsx")
 
 if __name__ == "__main__":
